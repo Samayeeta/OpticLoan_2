@@ -72,7 +72,7 @@ def hello_world():
     <body>
         <div class="container">
             <span class="emoji">👋</span>
-            <h1>Medhir said hello</h1>
+            <h1>Samayeeta time se aaja</h1>
             <p>Welcome to OpticLoan Backend</p>
         </div>
     </body>
