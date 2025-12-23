@@ -1,84 +1,58 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
+from werkzeug.utils import secure_filename
 from config import Config
+import os
 
 app = Flask(__name__)
 app.config.from_object(Config)
 CORS(app)
 
-@app.route('/')
-def hello_world():
-    html_content = """
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Greeting</title>
-        <style>
-            body {
-                margin: 0;
-                padding: 0;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                height: 100vh;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                color: white;
-            }
-            .container {
-                text-align: center;
-                padding: 2rem;
-                background: rgba(255, 255, 255, 0.1);
-                backdrop-filter: blur(10px);
-                border-radius: 20px;
-                box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-                border: 1px solid rgba(255, 255, 255, 0.18);
-                transition: transform 0.3s ease;
-            }
-            .container:hover {
-                transform: translateY(-5px);
-            }
-            h1 {
-                font-size: 3.5rem;
-                margin-bottom: 0.5rem;
-                text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-            }
-            p {
-                font-size: 1.2rem;
-                opacity: 0.8;
-            }
-            .emoji {
-                font-size: 4rem;
-                margin-bottom: 1rem;
-                display: block;
-                animation: wave 2s infinite;
-                transform-origin: 70% 70%;
-            }
-            @keyframes wave {
-                0% { transform: rotate(0deg); }
-                10% { transform: rotate(14deg); }
-                20% { transform: rotate(-8deg); }
-                30% { transform: rotate(14deg); }
-                40% { transform: rotate(-4deg); }
-                50% { transform: rotate(10deg); }
-                60% { transform: rotate(0deg); }
-                100% { transform: rotate(0deg); }
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <span class="emoji">👋</span>
-            <h1>Samayeeta time se aaja</h1>
-            <p>Welcome to OpticLoan Backend</p>
-        </div>
-    </body>
-    </html>
-    """
-    return html_content
+# Ensure upload directory exists
+UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max upload size
+
+@app.route('/', methods=['GET'])
+def health_check():
+    return jsonify({
+        "status": "online",
+        "service": "OpticLoan Backend",
+        "endpoints": ["/upload"]
+    }), 200
+
+@app.route('/upload', methods=['POST'])
+def upload_file():
+    if 'file' not in request.files:
+        return jsonify({"error": "No file part in the request"}), 400
+    
+    file = request.files['file']
+    
+    if file.filename == '':
+        return jsonify({"error": "No file selected for upload"}), 400
+    
+    if file and file.filename.lower().endswith('.pdf'):
+        filename = secure_filename(file.filename)
+        save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        
+        try:
+            file.save(save_path)
+            print(f"File saved successfully at: {save_path}")
+            return jsonify({
+                "message": "File successfully uploaded",
+                "filename": filename,
+                "status": "success"
+            }), 200
+        except Exception as e:
+            print(f"Error saving file: {str(e)}")
+            return jsonify({"error": "Internal server error while saving file"}), 500
+    else:
+        return jsonify({"error": "Invalid file type. Only PDF documents are authorized."}), 400
 
 if __name__ == '__main__':
-    app.run(debug=app.config['DEBUG'], port=app.config['PORT'])
+    port = int(app.config.get('PORT', 5000))
+    debug = app.config.get('DEBUG', True)
+    app.run(host='0.0.0.0', debug=debug, port=port)

@@ -20,11 +20,8 @@ const Home = () => {
                             Don't sign until you know. OpticLoan audits your loan agreements to extract core facts and expose predatory "trap clauses" with detailed legal reasoning.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4">
-                            <Link to="/get-started" className="px-8 py-4 bg-[#003366] text-white font-bold rounded shadow-lg hover:bg-[#002244] hover:-translate-y-1 transition-all text-center">
+                            <Link to="/upload" className="px-8 py-4 bg-[#003366] text-white font-bold rounded shadow-lg hover:bg-[#002244] hover:-translate-y-1 transition-all text-center uppercase tracking-widest">
                                 ANALYZE DOCUMENT
-                            </Link>
-                            <Link to="/dashboard" className="px-8 py-4 bg-white border-2 border-[#003366] text-[#003366] font-bold rounded shadow-sm hover:bg-slate-50 transition-all text-center">
-                                VIEW SAMPLE REPORT
                             </Link>
                         </div>
                     </div>

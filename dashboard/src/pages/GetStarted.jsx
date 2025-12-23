@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const GetStarted = () => {
     return (
@@ -20,9 +21,9 @@ const GetStarted = () => {
                     <p className="text-slate-500 font-medium text-sm leading-relaxed mb-8">
                         Upload personal mortgage, student loan, or personal credit agreements for instant trap analysis.
                     </p>
-                    <button className="w-full py-3 bg-[#003366] text-white font-bold rounded text-sm group-hover:bg-[#002244] transition-colors">
+                    <Link to="/upload" className="block w-full text-center py-3 bg-[#003366] text-white font-bold rounded text-sm group-hover:bg-[#002244] transition-colors uppercase">
                         UPLOAD DOCUMENT
-                    </button>
+                    </Link>
                 </div>
 
                 <div className="group p-8 bg-white border-2 border-slate-100 rounded-2xl cursor-pointer hover:border-[#003366] hover:shadow-xl transition-all relative overflow-hidden">
@@ -33,9 +34,9 @@ const GetStarted = () => {
                     <p className="text-slate-500 font-medium text-sm leading-relaxed mb-8">
                         For law firms and real estate teams managing high-volume loan batches with complex security instruments.
                     </p>
-                    <button className="w-full py-3 bg-white border-2 border-[#003366] text-[#003366] font-bold rounded text-sm hover:bg-slate-50 transition-colors">
+                    <Link to="/upload" className="block w-full text-center py-3 bg-white border-2 border-[#003366] text-[#003366] font-bold rounded text-sm hover:bg-slate-50 transition-colors uppercase">
                         ACCESS PRO CONSOLE
-                    </button>
+                    </Link>
                 </div>
             </div>
 

@@ -42,11 +42,6 @@ const Header = () => {
                             </Link>
                         </li>
                         <li>
-                            <Link to="/dashboard" className="text-sm font-bold text-gray-700 hover:text-[#003366] border-b-2 border-transparent hover:border-[#003366] py-1 transition-all">
-                                AUDIT DASHBOARD
-                            </Link>
-                        </li>
-                        <li>
                             <Link to="/resources" className="text-sm font-bold text-gray-700 hover:text-[#003366] border-b-2 border-transparent hover:border-[#003366] py-1 transition-all">
                                 TRAP DATABASE
                             </Link>
