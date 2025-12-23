@@ -20,7 +20,7 @@ const Footer = () => {
                         <h4 className="text-xs font-black uppercase tracking-[0.2em] mb-8 text-blue-200">Analysis</h4>
                         <ul className="space-y-4 text-sm font-bold text-white/70">
                             <li><Link to="/upload" className="hover:text-white transition-colors">Audit Protocols</Link></li>
-                            <li><Link to="/expert-advice" className="hover:text-white transition-colors">Trap Database</Link></li>
+                            <li><Link to="/trap-database" className="hover:text-white transition-colors">Trap Database</Link></li>
                             <li><Link to="/upload" className="hover:text-white transition-colors">Reasoning Engine</Link></li>
                             <li><Link to="/expert-advice" className="hover:text-white transition-colors">Sample Reports</Link></li>
                         </ul>

@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard';
 import GetStarted from './pages/GetStarted';
 import Upload from './pages/Upload';
 import ExpertAdvice from './pages/ExpertAdvice';
+import TrapDatabase from './pages/TrapDatabase';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="get-started" element={<GetStarted />} />
         <Route path="expert-advice" element={<ExpertAdvice />} />
+        <Route path="trap-database" element={<TrapDatabase />} />
       </Route>
     </Routes>
   );

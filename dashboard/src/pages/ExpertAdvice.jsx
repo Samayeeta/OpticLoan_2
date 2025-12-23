@@ -2,97 +2,90 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const ExpertAdvice = () => {
-    const caseStudies = [
+    const experts = [
         {
-            title: "The 'Invisible' Escalation Clause",
-            documentType: "Commercial Real Estate Loan",
-            summary: "A 45-page agreement where a late payment fee of 5% escalated to 15% of the total principal balance if unpaid for 30 days.",
-            impact: "Potential $120,000 penalty hidden in standard boiler-plate text.",
-            expertTip: "Always cross-reference the 'Events of Default' section with 'Penalty Schedules'.",
-            tag: "High Risk",
-            color: "red"
+            name: "Warren Buffett",
+            title: "Chairman & CEO, Berkshire Hathaway",
+            role: "Investment Legend",
+            advice: "Risk comes from not knowing what you're doing. Never sign a contract you haven't read twice and understood in its entirety.",
+            insight: "Buffett emphasizes that complexity is often a mask for risk. In loan agreements, high-complexity clauses (like Yield Maintenance) are designed to profit from borrower ignorance.",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Warren_Buffett_at_the_2015_SelectUSA_Investment_Summit.jpg/440px-Warren_Buffett_at_the_2015_SelectUSA_Investment_Summit.jpg",
+            tag: "Wisdom"
         },
         {
-            title: "The Prepayment 'Yield Maintenance' Trap",
-            documentType: "Small Business Administration (SBA) Loan",
-            summary: "Borrower thought they could refinance early. The contract contained a complex mathematical formula for yield maintenance that effectively doubled the cost of exit.",
-            impact: "Refinancing became mathematically impossible for the first 5 years.",
-            expertTip: "If you see the term 'Yield Maintenance', ask for a numerical example in writing before signing.",
-            tag: "Financial Lock-in",
-            color: "amber"
+            name: "Ray Dalio",
+            title: "Founder, Bridgewater Associates",
+            role: "Hedge Fund Expert",
+            advice: "He who lives by the crystal ball will eat shattered glass. Don't predict the future of interest rates; protect yourself against the worst-case scenario.",
+            insight: "Dalio advocates for 'Radical Transparency' and scenario testing. He advises borrowers to stress-test their loan documents against high-inflation or recession scenarios.",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Ray_Dalio_World_Economic_Forum_2013.jpg/440px-Ray_Dalio_World_Economic_Forum_2013.jpg",
+            tag: "Risk Management"
         },
         {
-            title: "The Cross-Collateralization Blindspot",
-            documentType: "Personal Line of Credit",
-            summary: "The bank linked the borrower's business loan to their personal home mortgage via a single sentence on page 22.",
-            impact: "A missed business payment put the family home at risk of foreclosure.",
-            expertTip: "Audit the 'Collateral' definitions carefully for any mention of 'future advances' or 'existing obligations'.",
-            tag: "Legal Trap",
-            color: "orange"
+            name: "Charlie Munger",
+            title: "Former Vice Chairman, Berkshire Hathaway",
+            role: "Capital Specialist",
+            advice: "Show me the incentive and I will show you the outcome. If a lender is incentivized to see you default, they will hide triggers in the fine print.",
+            insight: "Munger's 'Lollapalooza' effect suggests that multiple small predatory clauses can combine to create a catastrophic outcome for the borrower.",
+            tag: "Logic"
         },
         {
-            title: "The 'Insecurity' Acceleration Clause",
-            documentType: "Equipment Lease Agreement",
-            summary: "Lender had the right to demand full immediate repayment if they 'deemed themselves insecure' about the borrower's financial position, even without a missed payment.",
-            impact: "Business was forced into liquidation after an industry-wide downturn made the lender nervous.",
-            expertTip: "Demand that 'Acceleration' only occurs upon specific, objective defaults, not subjective 'feelings'.",
-            tag: "Liquidity Risk",
-            color: "red"
+            name: "Suze Orman",
+            title: "Financial Advisor & Author",
+            role: "Personal Finance Icon",
+            advice: "Own your power. A loan is a business transaction, not a favor. If you don't like the terms, walk away or negotiate.",
+            insight: "Orman focuses on the 'FICO' traps—how small default triggers can destroy a lifetime of credit building in a single billing cycle.",
+            tag: "Empowerment"
         }
     ];
 
     return (
         <div className="bg-white min-h-screen pb-24">
-            {/* Page Header */}
-            <section className="py-24 bg-slate-50 border-b border-slate-200 px-6">
-                <div className="max-w-7xl mx-auto">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#003366]/10 text-[#003366] text-xs font-black uppercase tracking-widest mb-6">
-                        Expert Knowledge Base
+            {/* Hero Section */}
+            <section className="py-24 bg-[#003366] text-white px-6">
+                <div className="max-w-7xl mx-auto text-center">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-400/20 text-blue-300 text-xs font-black uppercase tracking-widest mb-6">
+                        The Council of Experts
                     </div>
-                    <h1 className="text-5xl md:text-6xl font-black text-[#003366] mb-8 tracking-tight uppercase">
-                        Real-Life <br />
-                        <span className="text-amber-500">Document Audits.</span>
+                    <h1 className="text-5xl md:text-7xl font-black mb-8 tracking-tight uppercase leading-none">
+                        Advice from the <br />
+                        <span className="text-amber-400 uppercase">World's Greatest.</span>
                     </h1>
-                    <p className="text-xl text-slate-500 font-medium max-w-3xl leading-relaxed">
-                        Learn from the traps our AI has identified in actual loan agreements. Understanding these patterns is the first step to successful negotiation.
+                    <p className="text-xl text-blue-100/60 font-medium max-w-3xl mx-auto leading-relaxed italic">
+                        "The best way to protect your capital is to understand the legal instruments that govern it."
                     </p>
                 </div>
             </section>
 
-            {/* Case Studies Grid */}
-            <section className="py-20 px-6">
+            {/* Expert Advice Grid */}
+            <section className="py-24 px-6 relative -mt-12">
                 <div className="max-w-7xl mx-auto">
-                    <h2 className="text-2xl font-black text-[#003366] mb-12 uppercase tracking-tight flex items-center gap-4">
-                        Recent Forensic Deconstructions
-                        <div className="h-[2px] flex-grow bg-slate-100"></div>
-                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {experts.map((expert, i) => (
+                            <div key={i} className="bg-white border-2 border-slate-100 rounded-[40px] p-10 shadow-xl hover:translate-y-[-8px] transition-all flex flex-col md:flex-row gap-8 items-center lg:items-start">
+                                <div className="flex-grow">
+                                    <div className="flex items-center gap-3 mb-6">
+                                        <div className="px-3 py-1 bg-amber-50 text-amber-600 rounded-full text-[10px] font-black uppercase tracking-widest">
+                                            {expert.tag}
+                                        </div>
+                                        <div className="h-[1px] flex-grow bg-slate-100"></div>
+                                    </div>
+                                    <h3 className="text-3xl font-black text-[#003366] mb-1">{expert.name}</h3>
+                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6">{expert.title}</p>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {caseStudies.map((study, i) => (
-                            <div key={i} className="group border-2 border-slate-100 rounded-[32px] p-8 hover:border-[#003366] transition-all bg-white hover:shadow-2xl">
-                                <div className={`inline-block px-3 py-1 rounded-md text-[10px] font-black uppercase tracking-wider mb-6 ${study.color === 'red' ? 'bg-red-50 text-red-600' :
-                                    study.color === 'amber' ? 'bg-amber-50 text-amber-600' : 'bg-orange-50 text-orange-600'
-                                    }`}>
-                                    {study.tag}
-                                </div>
-                                <h3 className="text-xl font-black text-[#003366] mb-4 group-hover:text-[#003366] transition-colors">
-                                    {study.title}
-                                </h3>
-                                <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">
-                                    DOC TYPE: {study.documentType}
-                                </div>
-                                <p className="text-sm text-slate-600 leading-relaxed mb-6">
-                                    {study.summary}
-                                </p>
-                                <div className="p-4 bg-slate-50 rounded-2xl mb-6 border border-slate-100 italic text-sm text-[#003366]">
-                                    <span className="font-black uppercase text-[10px] block mb-2 not-italic text-red-500">The Impact:</span>
-                                    "{study.impact}"
-                                </div>
-                                <div className="flex items-start gap-3">
-                                    <div className="mt-1 text-emerald-500 font-bold italic">💡</div>
-                                    <p className="text-xs font-bold text-slate-500 leading-relaxed">
-                                        <span className="text-emerald-600">EXPERT TIP:</span> {study.expertTip}
-                                    </p>
+                                    <div className="relative mb-8">
+                                        <span className="absolute -top-4 -left-4 text-6xl text-[#003366]/5 font-serif">"</span>
+                                        <p className="text-xl font-bold text-[#003366] leading-relaxed relative z-10">
+                                            {expert.advice}
+                                        </p>
+                                    </div>
+
+                                    <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100">
+                                        <span className="text-[10px] font-black text-amber-600 uppercase tracking-widest block mb-2">Practical Application:</span>
+                                        <p className="text-sm text-slate-600 leading-relaxed italic">
+                                            {expert.insight}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         ))}
@@ -100,43 +93,17 @@ const ExpertAdvice = () => {
                 </div>
             </section>
 
-            {/* Negotiation Checklist */}
-            <section className="py-24 bg-[#003366] text-white px-6 mx-[5%] rounded-[48px]">
-                <div className="max-w-5xl mx-auto">
-                    <h2 className="text-4xl font-black mb-12 text-center uppercase tracking-tight">Standard Negotiation Checklist</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                        <div className="space-y-8">
-                            {[
-                                "Cap on Variable Rate Adjustments",
-                                "Grace Period for Late Payments (min 5 days)",
-                                "Deletion of 'Cross-Default' Clauses",
-                                "Right to Cure Default within 30 days"
-                            ].map((item, i) => (
-                                <div key={i} className="flex gap-4 items-center">
-                                    <div className="w-6 h-6 rounded-full bg-emerald-400 flex items-center justify-center text-[#003366] text-xs font-bold">✓</div>
-                                    <span className="font-bold text-lg">{item}</span>
-                                </div>
-                            ))}
-                        </div>
-                        <div className="space-y-8">
-                            {[
-                                "Fixed Prepayment Penalty schedule",
-                                "Financial Covenant Transparency",
-                                "Detailed Fee Disclosure (Page 1 summary)",
-                                "Governing Law locally defined"
-                            ].map((item, i) => (
-                                <div key={i} className="flex gap-4 items-center">
-                                    <div className="w-6 h-6 rounded-full bg-emerald-400 flex items-center justify-center text-[#003366] text-xs font-bold">✓</div>
-                                    <span className="font-bold text-lg">{item}</span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                    <div className="mt-16 text-center">
-                        <Link to="/upload" className="inline-block px-10 py-5 bg-amber-500 text-[#003366] font-black rounded-xl hover:bg-amber-400 transition-all uppercase tracking-widest shadow-xl">
-                            AUDIT YOUR DOCUMENT NOW
-                        </Link>
-                    </div>
+            {/* CTA Section */}
+            <section className="py-20 px-6">
+                <div className="max-w-4xl mx-auto bg-slate-900 rounded-[48px] p-12 text-center text-white relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
+                    <h2 className="text-3xl font-black mb-6 uppercase tracking-tight">Audit Like the 1%</h2>
+                    <p className="text-slate-400 mb-10 max-w-xl mx-auto">
+                        Don't leave your financial destiny to chance. Use the same document forensic standards used by elite capital managers.
+                    </p>
+                    <Link to="/upload" className="px-10 py-5 bg-amber-500 text-slate-900 font-black rounded-2xl hover:bg-amber-400 transition-all uppercase tracking-widest shadow-2xl inline-block">
+                        START PROFESSIONAL AUDIT
+                    </Link>
                 </div>
             </section>
         </div>
