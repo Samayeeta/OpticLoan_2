@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
     return (
@@ -18,10 +19,10 @@ const Footer = () => {
                     <div>
                         <h4 className="text-xs font-black uppercase tracking-[0.2em] mb-8 text-blue-200">Analysis</h4>
                         <ul className="space-y-4 text-sm font-bold text-white/70">
-                            <li><a href="#" className="hover:text-white transition-colors">Audit Protocols</a></li>
-                            <li><a href="#" className="hover:text-white transition-colors">Trap Database</a></li>
-                            <li><a href="#" className="hover:text-white transition-colors">Reasoning Engine</a></li>
-                            <li><a href="#" className="hover:text-white transition-colors">Sample Reports</a></li>
+                            <li><Link to="/upload" className="hover:text-white transition-colors">Audit Protocols</Link></li>
+                            <li><Link to="/expert-advice" className="hover:text-white transition-colors">Trap Database</Link></li>
+                            <li><Link to="/upload" className="hover:text-white transition-colors">Reasoning Engine</Link></li>
+                            <li><Link to="/expert-advice" className="hover:text-white transition-colors">Sample Reports</Link></li>
                         </ul>
                     </div>
 
@@ -29,7 +30,7 @@ const Footer = () => {
                         <h4 className="text-xs font-black uppercase tracking-[0.2em] mb-8 text-blue-200">Legal</h4>
                         <ul className="space-y-4 text-sm font-bold text-white/70">
                             <li><a href="#" className="hover:text-white transition-colors">Compliance Standards</a></li>
-                            <li><a href="#" className="hover:text-white transition-colors">Expert Network</a></li>
+                            <li><Link to="/expert-advice" className="hover:text-white transition-colors">Expert Network</Link></li>
                             <li><a href="#" className="hover:text-white transition-colors">Consumer Rights</a></li>
                             <li><a href="#" className="hover:text-white transition-colors">Fair Lending Acts</a></li>
                         </ul>
@@ -41,7 +42,7 @@ const Footer = () => {
                             <li><a href="#" className="hover:text-white transition-colors">About OpticLoan</a></li>
                             <li><a href="#" className="hover:text-white transition-colors">Security Audit</a></li>
                             <li><a href="#" className="hover:text-white transition-colors">Support Portal</a></li>
-                            <li><a href="#" className="hover:text-white transition-colors">Contact Advisor</a></li>
+                            <li><Link to="/expert-advice" className="hover:text-white transition-colors">Contact Advisor</Link></li>
                         </ul>
                     </div>
                 </div>
