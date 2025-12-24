@@ -131,12 +131,12 @@ const Dashboard = () => {
                 <div className="absolute top-0 right-0 p-10 opacity-10">
                     <span className="text-[12rem] font-black leading-none">⚖️</span>
                 </div>
-                <div className="relative z-10 max-w-2xl">
-                    <h2 className="text-2xl font-black mb-4 uppercase tracking-tight">Recommendation for Negotiation</h2>
-                    <p className="text-blue-100 font-medium leading-relaxed mb-6">
+                <div className="relative z-10 max-w-2xl px-4 md:px-0">
+                    <h2 className="text-xl md:text-2xl font-black mb-4 uppercase tracking-tight">Recommendation for Negotiation</h2>
+                    <p className="text-blue-100 font-medium leading-relaxed mb-6 text-sm md:text-base">
                         Based on the identified traps, we recommend requesting the removal of the 3-day trigger in Article 4.2. Current market standards usually allow 10-15 days before any penalty, and "re-capitalization" should be replaced with a one-time fixed late fee.
                     </p>
-                    <button className="px-6 py-3 bg-amber-500 text-[#003366] font-black rounded shadow-lg hover:bg-amber-400 hover:-translate-y-0.5 transition-all text-sm uppercase tracking-widest">
+                    <button className="w-full md:w-auto px-6 py-3 bg-amber-500 text-[#003366] font-black rounded shadow-lg hover:bg-amber-400 hover:-translate-y-0.5 transition-all text-sm uppercase tracking-widest">
                         GENERATE COUNTER-OFFER DOC
                     </button>
                 </div>

@@ -101,10 +101,10 @@ const TrapDatabase = () => {
             </section>
 
             {/* Negotiation Checklist */}
-            <section className="py-24 bg-red-600 text-white px-6 mx-[5%] rounded-[48px]">
+            <section className="py-16 md:py-24 bg-red-600 text-white px-6 md:mx-[5%] rounded-[32px] md:rounded-[48px]">
                 <div className="max-w-5xl mx-auto">
-                    <h2 className="text-4xl font-black mb-12 text-center uppercase tracking-tight">Standard Counter-Measures</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <h2 className="text-3xl md:text-4xl font-black mb-12 text-center uppercase tracking-tight leading-tight">Standard Counter-Measures</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
                         <div className="space-y-8">
                             {[
                                 "Cap on Variable Rate Adjustments",

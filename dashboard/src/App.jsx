@@ -8,6 +8,7 @@ import Upload from './pages/Upload';
 import ExpertAdvice from './pages/ExpertAdvice';
 import TrapDatabase from './pages/TrapDatabase';
 import Technology from './pages/Technology';
+import Glossary from './pages/Glossary';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="expert-advice" element={<ExpertAdvice />} />
         <Route path="trap-database" element={<TrapDatabase />} />
         <Route path="technology" element={<Technology />} />
+        <Route path="glossary" element={<Glossary />} />
       </Route>
     </Routes>
   );
