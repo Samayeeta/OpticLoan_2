@@ -30,9 +30,15 @@ const Upload = () => {
         const formData = new FormData();
         formData.append('file', file);
 
+        const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+        const apiKey = import.meta.env.VITE_API_KEY;
+
         try {
-            const response = await fetch('https://opticloan.onrender.com/upload', {
+            const response = await fetch(`${backendUrl}/upload`, {
                 method: 'POST',
+                headers: {
+                    'X-API-Key': apiKey,
+                },
                 body: formData,
             });
 
