@@ -60,63 +60,86 @@ const Upload = () => {
     };
 
     return (
-        <>
+        <div className="min-h-screen bg-slate-50/50">
             {uploading && <AnalysisLoading />}
 
-            <div className="py-24 px-6 max-w-4xl mx-auto text-center">
-                <div className="inline-flex h-20 w-20 items-center justify-center rounded-2xl bg-[#003366]/5 text-[#003366] text-4xl mb-8 border-2 border-[#003366]/10 shadow-inner">
-                    📄
+            <div className="pt-40 pb-24 px-6 max-w-4xl mx-auto text-center animate-fade-in">
+                <div className="inline-flex h-24 w-24 items-center justify-center rounded-sm bg-[#002147] text-white text-4xl mb-10 shadow-2xl">
+                    ⚖️
                 </div>
-                <h1 className="text-4xl md:text-5xl font-black text-[#003366] mb-6 tracking-tight uppercase">Upload Loan Agreement</h1>
-                <p className="text-xl text-slate-500 font-medium mb-12 leading-relaxed max-w-2xl mx-auto">
-                    Upload your PDF document for deep forensic analysis. Our AI will identify core facts and potential trap clauses.
+                <h1 className="text-5xl md:text-6xl font-black text-[#002147] mb-8 tracking-tighter uppercase">
+                    Document <span className="text-[#C5A021]">Ingestion</span>
+                </h1>
+                <p className="text-xl text-slate-500 font-medium mb-16 leading-relaxed max-w-2xl mx-auto border-l-4 border-[#C5A021]/30 pl-8 text-left">
+                    Finalize your audit preparation. Upload the target loan agreement in PDF format for high-fidelity scanning and clause extraction.
                 </p>
 
-                <div className="max-w-xl mx-auto p-10 bg-white border-2 border-dashed border-slate-200 rounded-[32px] hover:border-[#003366] transition-all group">
-                    <input
-                        type="file"
-                        id="file-upload"
-                        className="hidden"
-                        accept=".pdf"
-                        onChange={handleFileChange}
-                    />
-                    <label
-                        htmlFor="file-upload"
-                        className="cursor-pointer flex flex-col items-center gap-4"
-                    >
-                        <div className="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center text-[#003366] text-2xl group-hover:bg-[#003366]/10 transition-colors">
-                            ⬆️
+                <div className="max-w-2xl mx-auto border-4 border-[#002147] bg-white shadow-[20px_20px_0px_0px_rgba(0,33,71,0.05)] transition-all group overflow-hidden">
+                    <div className="p-12 border-b-2 border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                        <div className="text-left">
+                            <p className="text-[10px] font-black text-[#002147] uppercase tracking-widest mb-1">Security Protocol</p>
+                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">TLS 1.3 | AES-256</p>
                         </div>
-                        <div>
-                            <p className="text-lg font-bold text-[#003366]">{file ? file.name : 'Select PDF File'}</p>
-                            <p className="text-sm text-slate-400 font-medium">Drag and drop or click to browse</p>
-                        </div>
-                    </label>
+                        <div className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
+                    </div>
+
+                    <div className="p-16">
+                        <input
+                            type="file"
+                            id="file-upload"
+                            className="hidden"
+                            accept=".pdf"
+                            onChange={handleFileChange}
+                        />
+                        <label
+                            htmlFor="file-upload"
+                            className="cursor-pointer flex flex-col items-center gap-6"
+                        >
+                            <div className="w-20 h-20 bg-slate-100 flex items-center justify-center text-[#002147] text-3xl group-hover:bg-[#002147] group-hover:text-white transition-all transform group-hover:scale-110">
+                                {file ? '✅' : '📄'}
+                            </div>
+                            <div className="text-center">
+                                <p className="text-xl font-black text-[#002147] tracking-tight uppercase">
+                                    {file ? file.name : 'Select Official PDF'}
+                                </p>
+                                <p className="text-[11px] text-slate-400 font-bold uppercase tracking-[0.2em] mt-2">
+                                    Format: Portable Document Format (max 25MB)
+                                </p>
+                            </div>
+                        </label>
+                    </div>
                 </div>
 
-                {error && <p className="mt-6 text-red-500 font-bold uppercase text-xs tracking-widest">{error}</p>}
-
-                <button
-                    onClick={handleUpload}
-                    disabled={uploading || !file}
-                    className={`mt-10 px-10 py-4 bg-[#003366] text-white font-bold rounded-xl shadow-lg transition-all uppercase tracking-widest ${uploading || !file ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#002244] hover:-translate-y-1'
-                        }`}
-                >
-                    {uploading ? 'Analyzing...' : 'Start Audit Analysis'}
-                </button>
-
-                <div className="mt-12 flex items-center justify-center gap-8 grayscale opacity-50">
-                    <div className="flex items-center gap-2">
-                        <span className="text-xl">🔒</span>
-                        <span className="text-[10px] font-black uppercase tracking-widest">End-to-End Encryption</span>
+                {error && (
+                    <div className="mt-10 p-4 bg-red-50 border-l-4 border-red-500 inline-block">
+                        <p className="text-red-700 font-black uppercase text-[10px] tracking-[0.2em] leading-none">{error}</p>
                     </div>
-                    <div className="flex items-center gap-2">
-                        <span className="text-xl">🛡️</span>
-                        <span className="text-[10px] font-black uppercase tracking-widest">Privacy Verified</span>
+                )}
+
+                <div className="mt-16 flex flex-col items-center gap-8">
+                    <button
+                        onClick={handleUpload}
+                        disabled={uploading || !file}
+                        className={`px-16 py-6 bg-[#002147] text-white font-black rounded-sm shadow-[0_10px_40px_rgba(0,33,71,0.3)] transition-all uppercase tracking-[0.3em] text-xs ${uploading || !file ? 'opacity-30 cursor-not-allowed' : 'hover:bg-[#003366] hover:-translate-y-1 active:translate-y-0'
+                            }`}
+                    >
+                        {uploading ? 'Processing Stream...' : 'Execute Forensic Audit'}
+                    </button>
+
+                    <div className="flex items-center gap-10 opacity-30 grayscale hover:opacity-100 hover:grayscale-0 transition-all duration-700">
+                        <div className="flex items-center gap-3">
+                            <span className="text-lg">🛡️</span>
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em]">State-Level Privacy</span>
+                        </div>
+                        <div className="w-px h-4 bg-slate-300"></div>
+                        <div className="flex items-center gap-3">
+                            <span className="text-lg">📜</span>
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em]">Compliance Verified</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </>
+        </div>
     );
 };
 
