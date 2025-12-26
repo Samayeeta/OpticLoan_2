@@ -5,34 +5,71 @@
   line-height: 1.6;
   font-weight: 400;
 
-  /* Modern Professional Palette */
-  --primary: #4f46e5;
-  /* Indigo 600 */
-  --primary-hover: #4338ca;
+  /* Institutional Color Palette */
+  --primary: #002147;
+  /* Imperial Blue */
+  --primary-light: #003366;
+  --accent: #C5A021;
+  /* Muted Gold */
   --secondary: #64748b;
-  /* Slate 500 */
-  --background: #f8fafc;
-  /* Slate 50 */
+  --background: #fcfcfc;
   --surface: #ffffff;
-  --text-main: #0f172a;
-  /* Slate 900 */
-  --text-muted: #475569;
-  /* Slate 600 */
-  --accent: #f59e0b;
-  /* Amber 500 */
-  --danger: #ef4444;
-  --success: #22c55e;
+  --danger: #991b1b;
+  --success: #166534;
+
+  color-scheme: light;
+  background-color: var(--background);
+  color: #0f172a;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+.font-serif {
+  font-family: 'Playfair Display', serif;
+}
+
+.font-mono {
+  font-family: 'Space Grotesk', monospace;
+}
+
+* {
+  box-sizing: border-box;
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
-  background-color: var(--background);
-  color: var(--text-main);
-  -webkit-font-smoothing: antialiased;
+  min-width: 320px;
+  min-height: 100vh;
+  background-image:
+    radial-gradient(circle at 2px 2px, rgba(0, 33, 71, 0.02) 1px, transparent 0);
+  background-size: 32px 32px;
 }
 
 #root {
   width: 100%;
+}
+
+.glass-effect {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.gold-gradient {
+  background: linear-gradient(135deg, #C5A021 0%, #E2C275 100%);
+}
+
+.navy-gradient {
+  background: linear-gradient(135deg, #002147 0%, #003366 100%);
 }
 
 @keyframes fadeIn {
@@ -48,33 +85,23 @@ body {
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.5s ease-out forwards;
+  animation: fadeIn 0.8s ease-out forwards;
 }
 
-@keyframes spin-slow {
-  from {
-    transform: rotate(0deg);
+@keyframes border-glow {
+  0% {
+    border-color: rgba(197, 160, 33, 0.2);
   }
 
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.animate-spin-slow {
-  animation: spin-slow 20s linear infinite;
-}
-
-@keyframes reverse-spin {
-  from {
-    transform: rotate(360deg);
+  50% {
+    border-color: rgba(197, 160, 33, 0.5);
   }
 
-  to {
-    transform: rotate(0deg);
+  100% {
+    border-color: rgba(197, 160, 33, 0.2);
   }
 }
 
-.animate-reverse-spin {
-  animation: reverse-spin 15s linear infinite;
+.glow-border {
+  animation: border-glow 3s infinite;
 }
