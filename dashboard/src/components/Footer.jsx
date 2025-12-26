@@ -3,70 +3,58 @@ import { Link } from 'react-router-dom';
 
 const Footer = () => {
     return (
-        <footer className="bg-[#002147] text-white pt-24 pb-12 border-t-[8px] border-[#C5A021]">
+        <footer className="bg-[#003366] text-white pt-20 pb-10">
             <div className="max-w-7xl mx-auto px-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-24">
-                    <div className="space-y-8">
-                        <div className="flex items-center gap-4">
-                            <span className="text-3xl filter grayscale brightness-200">⚖️</span>
-                            <span className="text-2xl font-black tracking-tighter uppercase">
-                                OPTIC<span className="text-[#C5A021]">LOAN</span>
-                            </span>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
+                    <div className="space-y-6">
+                        <div className="flex items-center gap-3">
+                            <span className="text-3xl">⚖️</span>
+                            <span className="text-2xl font-black tracking-tighter">OPTICLOAN</span>
                         </div>
-                        <p className="text-slate-400 leading-relaxed text-[13px] font-medium max-w-xs">
-                            National authority in loan document forensics. Providing institutional-grade transparency for the Indian financial sector.
+                        <p className="text-blue-200/60 leading-relaxed text-sm font-medium">
+                            The premier global standard in loan document auditing and trap clause identification. Protecting borrowers through transparency and AI-driven analysis.
                         </p>
-                        <div className="flex gap-4">
-                            <div className="w-8 h-8 rounded-sm bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#C5A021] transition-colors cursor-pointer">
-                                <span className="text-[10px] font-black italic">In</span>
-                            </div>
-                            <div className="w-8 h-8 rounded-sm bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#C5A021] transition-colors cursor-pointer">
-                                <span className="text-[10px] font-black italic">X</span>
-                            </div>
-                        </div>
                     </div>
 
                     <div>
-                        <h4 className="text-[10px] font-black uppercase tracking-[0.4em] mb-10 text-[#C5A021]">Operational</h4>
-                        <ul className="space-y-5 text-xs font-bold text-slate-300">
-                            <li><Link to="/upload" className="hover:text-[#C5A021] transition-colors tracking-widest uppercase">Audit Portal</Link></li>
-                            <li><Link to="/trap-database" className="hover:text-[#C5A021] transition-colors tracking-widest uppercase">Trap Repository</Link></li>
-                            <li><Link to="/technology" className="hover:text-[#C5A021] transition-colors tracking-widest uppercase">Analysis Engine</Link></li>
-                            <li><Link to="/glossary" className="hover:text-[#C5A021] transition-colors tracking-widest uppercase">Legal Lexicon</Link></li>
+                        <h4 className="text-xs font-black uppercase tracking-[0.2em] mb-8 text-blue-200">Analysis</h4>
+                        <ul className="space-y-4 text-sm font-bold text-white/70">
+                            <li><Link to="/upload" className="hover:text-white transition-colors">Audit Protocols</Link></li>
+                            <li><Link to="/trap-database" className="hover:text-white transition-colors">Trap Database</Link></li>
+                            <li><Link to="/upload" className="hover:text-white transition-colors">Reasoning Engine</Link></li>
+                            <li><Link to="/expert-advice" className="hover:text-white transition-colors">Sample Reports</Link></li>
                         </ul>
                     </div>
 
                     <div>
-                        <h4 className="text-[10px] font-black uppercase tracking-[0.4em] mb-10 text-[#C5A021]">Regulatory</h4>
-                        <ul className="space-y-5 text-xs font-bold text-slate-300">
-                            <li><a href="#" className="hover:text-[#C5A021] transition-colors tracking-widest uppercase">Compliance Desk</a></li>
-                            <li><Link to="/expert-advice" className="hover:text-[#C5A021] transition-colors tracking-widest uppercase">Advisor Panel</Link></li>
-                            <li><a href="#" className="hover:text-[#C5A021] transition-colors tracking-widest uppercase">Consumer Charter</a></li>
-                            <li><a href="#" className="hover:text-[#C5A021] transition-colors tracking-widest uppercase">Fair Disclosure</a></li>
+                        <h4 className="text-xs font-black uppercase tracking-[0.2em] mb-8 text-blue-200">Legal</h4>
+                        <ul className="space-y-4 text-sm font-bold text-white/70">
+                            <li><a href="#" className="hover:text-white transition-colors">Compliance Standards</a></li>
+                            <li><Link to="/expert-advice" className="hover:text-white transition-colors">Expert Network</Link></li>
+                            <li><a href="#" className="hover:text-white transition-colors">Consumer Rights</a></li>
+                            <li><a href="#" className="hover:text-white transition-colors">Fair Lending Acts</a></li>
                         </ul>
                     </div>
 
                     <div>
-                        <h4 className="text-[10px] font-black uppercase tracking-[0.4em] mb-10 text-[#C5A021]">Framework</h4>
-                        <ul className="space-y-5 text-xs font-bold text-slate-300">
-                            <li><a href="#" className="hover:text-[#C5A021] transition-colors tracking-widest uppercase">System Status</a></li>
-                            <li><a href="#" className="hover:text-[#C5A021] transition-colors tracking-widest uppercase">Security Audit</a></li>
-                            <li><a href="#" className="hover:text-[#C5A021] transition-colors tracking-widest uppercase">Central Support</a></li>
-                            <li><Link to="/get-started" className="hover:text-[#C5A021] transition-colors tracking-widest uppercase">Direct Contact</Link></li>
+                        <h4 className="text-xs font-black uppercase tracking-[0.2em] mb-8 text-blue-200">Company</h4>
+                        <ul className="space-y-4 text-sm font-bold text-white/70">
+                            <li><a href="#" className="hover:text-white transition-colors">About OpticLoan</a></li>
+                            <li><a href="#" className="hover:text-white transition-colors">Security Audit</a></li>
+                            <li><a href="#" className="hover:text-white transition-colors">Support Portal</a></li>
+                            <li><Link to="/expert-advice" className="hover:text-white transition-colors">Contact Advisor</Link></li>
                         </ul>
                     </div>
                 </div>
 
-                <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8">
-                    <div className="flex items-center gap-6">
-                        <p className="text-[9px] font-black text-slate-500 uppercase tracking-[0.3em]">
-                            © {new Date().getFullYear()} OPTICLOAN NATIONAL AUDIT BUREAU.
-                        </p>
-                    </div>
-                    <div className="flex gap-10 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">
-                        <a href="#" className="hover:text-[#C5A021] transition-colors">Legal Terms</a>
-                        <a href="#" className="hover:text-[#C5A021] transition-colors">Privacy Policy</a>
-                        <a href="#" className="hover:text-[#C5A021] transition-colors">Infrastructure</a>
+                <div className="pt-10 border-t border-blue-900 flex flex-col md:row justify-between items-center gap-6">
+                    <p className="text-[11px] font-bold text-blue-200/40 uppercase tracking-widest">
+                        © {new Date().getFullYear()} OPTICLOAN SYSTEMS. ALL RIGHTS RESERVED. AUDIT SECURE ACTIVATED.
+                    </p>
+                    <div className="flex gap-8 text-[11px] font-black text-blue-200/60 uppercase tracking-wider">
+                        <a href="#" className="hover:text-white transition-colors">Legal Terms</a>
+                        <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
+                        <a href="#" className="hover:text-white transition-colors">Data Security</a>
                     </div>
                 </div>
             </div>
