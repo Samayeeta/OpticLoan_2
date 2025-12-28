@@ -66,8 +66,44 @@ def upload_file():
         except Exception as e:
             app.logger.error(f"Error saving file: {str(e)}")
             return jsonify({"error": "Internal server error"}), 500
-    else:
         return jsonify({"error": "Invalid file type. Only PDF documents are authorized."}), 400
+
+from services.ml_service import process_document
+
+@app.route('/api/analyze', methods=['POST'])
+@require_api_key
+def analyze_document():
+    if 'file' not in request.files:
+        return jsonify({"error": "No file part"}), 400
+        
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({"error": "No selected file"}), 400
+        
+    if file and file.filename.lower().endswith('.pdf'):
+        filename = secure_filename(file.filename)
+        unique_filename = f"{uuid.uuid4()}_{filename}"
+        save_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
+        
+        try:
+            file.save(save_path)
+            
+            # Run the ML pipeline
+            result = process_document(save_path)
+            
+            # Helper to delete file after processing? For now keep it.
+            
+            return jsonify({
+                "status": "success",
+                "filename": filename,
+                "analysis": result
+            }), 200
+            
+        except Exception as e:
+            app.logger.error(f"Analysis failed: {e}")
+            return jsonify({"error": str(e)}), 500
+    else:
+        return jsonify({"error": "Invalid file type"}), 400
 
 if __name__ == '__main__':
     port = int(app.config.get('PORT', 5000))

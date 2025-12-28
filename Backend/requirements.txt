@@ -2,3 +2,7 @@ flask
 flask-cors
 gunicorn
 python-dotenv
+pytesseract
+pdf2image
+Pillow
+google-generativeai
