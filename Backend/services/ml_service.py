@@ -12,14 +12,14 @@ if api_key:
     # gemini-1.5-flash was missing, using gemini-flash-latest instead
     model = genai.GenerativeModel('gemini-flash-latest')
 
-def extract_text_tesseract(pdf_path, max_pages=2):
+def extract_text_tesseract(pdf_path, max_pages=None):
     """
     Convert PDF to images and extract text using Tesseract OCR.
     """
     try:
         images = convert_from_path(pdf_path)
         
-        # Limit pages to avoid hitting token limits during testing
+        # Limit pages only if specified (default None for production)
         if max_pages:
             print(f"Limiting OCR to first {max_pages} pages...")
             images = images[:max_pages]
@@ -34,84 +34,107 @@ def extract_text_tesseract(pdf_path, max_pages=2):
         print(f"Error in Tesseract OCR: {e}")
         raise e
 
-def analyze_text_batches(text, chunk_size=20000):
+def analyze_text_batches(text, chunk_size=10000):
     """
-    analyze text in batches using Gemini to avoid token limits.
+    MAP PHASE: Extract raw facts/flags from chunks.
     """
     chunks = [text[i:i+chunk_size] for i in range(0, len(text), chunk_size)]
+    map_results = []
     
-    combined_result = {
-        "document_metadata": {"trust_score": 100, "verdict": "Safe"}, # Default, to be updated
-        "facts": {},
-        "red_flags": [],
-        "explainability": {"confidence": 0.0}
-    }
-    
-    print(f"Processing {len(chunks)} chunks...")
+    print(f"Map Phase: Processing {len(chunks)} chunks...")
 
     for i, chunk in enumerate(chunks):
         prompt = f"""
-        You are a legal auditor. Extract key loan facts and identify "Red Flags" (predatory clauses) from the following text chunk (Part {i+1}/{len(chunks)}).
+        (Part {i+1}/{len(chunks)}) - EXTRACT RAW FINDINGS
+        Analyze this section of a loan document. Extract every significant fact and any predatory/hidden clauses.
         
-        Text:
+        Focus on:
+        - Penalties, interest rates, repayment rules, collateral, and legal jurisdiction.
+        
+        Return JSON format:
+        {{
+            "raw_facts": {{ "key": "value" }},
+            "potential_flags": [ {{ "severity": "High/Med/Low", "category": "...", "text": "...", "reason": "..." }} ]
+        }}
+        
+        TEXT:
         {chunk}
-        
-        Return JSON with:
-        - facts: {{ key: value }} (Update known facts)
-        - red_flags: [ {{ severity, category, text_found, reasoning }} ]
         """
         
-        # Retry logic
-        retries = 3
-        for attempt in range(retries):
+        # Retry logic with backoff
+        for attempt in range(3):
             try:
                 response = model.generate_content(
                     prompt, 
                     generation_config=genai.GenerationConfig(response_mime_type="application/json")
                 )
-                
-                chunk_result = json.loads(response.text)
-                
-                # Merge results (Simplified merging logic)
-                if "facts" in chunk_result:
-                    combined_result["facts"].update(chunk_result["facts"])
-                if "red_flags" in chunk_result:
-                    combined_result["red_flags"].extend(chunk_result["red_flags"])
-                
-                break # Success
+                map_results.append(json.loads(response.text))
+                break
             except Exception as e:
-                if "429" in str(e) and attempt < retries - 1:
-                    wait_time = (2 ** attempt) * 10
-                    print(f"Quota exceeded. Retrying in {wait_time}s...")
-                    time.sleep(wait_time)
+                if "429" in str(e) and attempt < 2:
+                    time.sleep(15 * (attempt + 1)) # Wait longer for large docs
                 else:
-                    print(f"Error processing chunk {i}: {e}")
-                    # Continue to next chunk or fail? For now log and continue
+                    print(f"Skipping chunk {i} due to error: {e}")
                     break
         
-        # Rate limit spacing (increased to avoid RPM limits)
-        time.sleep(5) 
+        time.sleep(5) # Rate limit padding
 
-    return combined_result
+    return map_results
+
+def reduce_results(map_results):
+    """
+    REDUCE PHASE: deduplicate and synthesize all findings.
+    """
+    print("Reduce Phase: Synthesizing findings...")
+    
+    combined_raw = json.dumps(map_results)
+    
+    prompt = f"""
+    SYNTHESIZE LOAN AUDIT RESULTS
+    You are given a list of raw findings extracted from different parts of a loan document.
+    Your job is to deduplicate them, resolve contradictions, and provide a final cohesive report.
+    
+    Data:
+    {combined_raw}
+    
+    Return a single JSON object with this exact structure:
+    {{
+        "document_metadata": {{ "trust_score": 0-100, "verdict": "Safe/Caution/Critical" }},
+        "facts": {{ "Key Name": "Cleaned Value" }},
+        "red_flags": [ {{ "severity": "...", "category": "...", "text_found": "...", "reasoning": "..." }} ],
+        "explainability": {{ "confidence": 0.0-1.0 }}
+    }}
+    """
+    
+    try:
+        response = model.generate_content(
+            prompt, 
+            generation_config=genai.GenerationConfig(response_mime_type="application/json")
+        )
+        return json.loads(response.text)
+    except Exception as e:
+        print(f"Error in reduction phase: {e}")
+        # Return a fallback merge if Gemini fails
+        return {"error": "Reduction failed", "raw_data": map_results}
 
 def process_document(pdf_path):
     """
-    Orchestrate OCR and Analysis.
+    Orchestrate Map-Reduce Pipeline.
     """
     start_time = time.time()
     
-    # 1. OCR
-    print(f"Starting OCR for {pdf_path}...")
+    # 1. OCR (Full document)
     raw_text = extract_text_tesseract(pdf_path)
-    print(f"OCR Complete. Extracted {len(raw_text)} chars.")
     
-    # 2. Analysis
-    print("Starting Gemini Analysis...")
-    analysis_result = analyze_text_batches(raw_text)
+    # 2. Map Phase (Extraction)
+    map_data = analyze_text_batches(raw_text)
     
-    analysis_result["performance"] = {
-        "ocr_time": 0, # Placeholder
+    # 3. Reduce Phase (Synthesis)
+    final_analysis = reduce_results(map_data)
+    
+    final_analysis["performance"] = {
+        "chunks_processed": len(map_data),
         "total_time": time.time() - start_time
     }
     
-    return analysis_result
+    return final_analysis
