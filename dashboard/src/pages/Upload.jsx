@@ -35,7 +35,7 @@ const Upload = () => {
         const apiKey = import.meta.env.VITE_API_KEY;
 
         try {
-            const response = await fetch(`${backendUrl}/upload`, {
+            const response = await fetch(`${backendUrl}/api/analyze`, {
                 method: 'POST',
                 headers: {
                     'X-API-Key': apiKey,
@@ -44,13 +44,17 @@ const Upload = () => {
             });
 
             if (response.status === 200) {
+                const data = await response.json();
+                // Store the analysis results in session storage for the dashboard
+                sessionStorage.setItem('lastAnalysis', JSON.stringify(data));
+                
                 // Keep the loading screen visible for a moment for psychological "work" feel
                 setTimeout(() => {
                     navigate('/dashboard');
                 }, 1500);
             } else {
                 const data = await response.json();
-                setError(data.error || 'Upload failed. Please try again.');
+                setError(data.error || 'Analysis failed. Please try again.');
                 setUploading(false);
             }
         } catch (err) {
