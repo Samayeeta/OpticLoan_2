@@ -17,21 +17,23 @@ if Config.GEMINI_API_KEY:
 else:
     print("WARNING: GEMINI_API_KEY not found in environment.")
 
-def extract_text_smart(pdf_path):
+def extract_text_smart(pdf_path, max_pages=3):
     """
-    Extract text using pdfplumber (fast) and fallback to Tesseract (OCR) for scanned pages.
-    Optimized for memory by using lower DPI.
+    Extract text using pdfplumber (fast) and fallback to Tesseract (OCR).
+    LIMITED TO 3 PAGES for memory stability on Free Tier.
     """
     all_text = ""
     try:
         with pdfplumber.open(pdf_path) as pdf:
-            for i, page in enumerate(pdf.pages):
+            # Process only first 3 pages
+            pages_to_process = pdf.pages[:max_pages]
+            print(f"Processing first {len(pages_to_process)} pages...")
+            
+            for i, page in enumerate(pages_to_process):
                 page_text = page.extract_text()
                 
-                # If pdfplumber finds very little text, try OCR as fallback for this page
                 if not page_text or len(page_text.strip()) < 50:
                     print(f"Page {i+1} seems to be scanned, falling back to OCR (Low RAM mode)...")
-                    # Memory optimization: dpi=100 is usually enough for OCR but uses much less RAM
                     images = convert_from_path(pdf_path, first_page=i+1, last_page=i+1, dpi=100)
                     if images:
                         page_text = pytesseract.image_to_string(images[0])
@@ -40,9 +42,9 @@ def extract_text_smart(pdf_path):
         return all_text
     except Exception as e:
         print(f"Error in Smart Text Extraction: {e}")
-        # Final fallback to lower-DPI OCR
         try:
-            images = convert_from_path(pdf_path, dpi=100)
+            # Final fallback to lower-DPI OCR, also limited to 3 pages
+            images = convert_from_path(pdf_path, dpi=100, last_page=max_pages)
             return "\n".join([pytesseract.image_to_string(img) for img in images])
         except Exception as oom_err:
             print(f"Critical OOM during fallback OCR: {oom_err}")
@@ -56,20 +58,20 @@ def analyze_document_gemini(text):
         return {"error": "Gemini client not initialized. Check API key."}
 
     prompt = f"""
-    You are a professional loan agreement auditor. Analyze the following loan document text.
+    You are a professional loan agreement auditor. Analyze the following loan document text (First 3 pages only).
     
     TEXT:
-    {text[:30000]}
+    {text}
 
     INSTRUCTIONS:
-    1. Extract core loan facts (Interest Rate, Loan Amount, Loan Term, Late Penalties, Collateral, Jurisdiction).
-    2. Identify specific "Red Flags" or predatory clauses.
-    3. For each Red Flag, explain why it is risky.
-    4. Provide a trust score (0-100) and a verdict (Safe, Caution, Critical).
+    1. Extract core loan facts.
+    2. Identify specific "Red Flags".
+    3. Provide a trust score (0-100) and a verdict.
+    4. Since this is the Free Version, acknowledge that only the first 3 pages were analyzed.
 
     OUTPUT FORMAT (Strict JSON only):
     {{
-        "document_metadata": {{ "trust_score": number, "verdict": "Safe" | "Caution" | "Critical" }},
+        "document_metadata": {{ "trust_score": number, "verdict": "Safe" | "Caution" | "Critical", "notice": "Analyzed first 3 pages only (Free Tier)" }},
         "facts": {{
             "Interest Rate": "string",
             "Loan Amount": "string",
