@@ -2,9 +2,7 @@ import os
 import re
 import json
 import time
-import pdfplumber
-import pytesseract
-from pdf2image import convert_from_path
+import fitz  # PyMuPDF
 from google import genai
 from config import Config
 
@@ -18,176 +16,145 @@ if Config.GEMINI_API_KEY:
 else:
     print("WARNING: GEMINI_API_KEY not found in environment.")
 
-# --- HEURISTIC RISK SIGNALS ---
+# --- ENHANCED HEURISTIC RISK MAPPINGS ---
 RISK_CATEGORIES = {
-    "Financial Traps": ["fee", "charge", "penalty", "commission", "cost", "repayment", "prepayment", "yield maintenance", "balloon", "interest rate", "apr", "percentage"],
-    "Default & Seizure": ["default", "acceleration", "seize", "possession", "collateral", "foreclosure", "security interest", "remedy", "breach", "termination"],
-    "Legal Waivers": ["waive", "jury trial", "arbitration", "jurisdiction", "governing law", "venue", "class action", "immunity", "liability"],
-    "Hidden Obligations": ["confession of judgment", "cognovit", "guaranty", "indemnify", "power of attorney", "assignment"]
+    "Predatory Finance": ["fee", "charge", "penalty", "commission", "cost", "repayment", "prepayment", "yield maintenance", "balloon", "interest rate", "apr", "percentage"],
+    "Default & Asset Seizure": ["default", "acceleration", "seize", "possession", "collateral", "foreclosure", "security interest", "remedy", "breach", "termination", "forfeiture", "repossession", "lien"],
+    "Legal & Arbitration Traps": ["waive", "jury trial", "arbitration", "jurisdiction", "governing law", "venue", "class action", "immunity", "liability", "dispute", "litigation"],
+    "Extensive Obligations": ["confession of judgment", "cognovit", "guaranty", "indemnify", "power of attorney", "assignment"]
 }
 
-def extract_text_full_doc(pdf_path):
+def extract_heuristic_signals(pdf_path):
     """
-    Extract text from the entire document page-by-page.
-    Uses pdfplumber for speed and fallback OCR for scanned pages.
+    Ultra-lightweight scan using PyMuPDF. 
+    Only extracts raw text for the local scanner to find hotspots.
+    Memory footprint remains extremely low (~10-20MB).
     """
-    all_text = []
+    hotspots = []
     try:
-        with pdfplumber.open(pdf_path) as pdf:
-            print(f"Scanning document ({len(pdf.pages)} pages)...")
-            for i, page in enumerate(pdf.pages):
-                page_text = page.extract_text()
-                
-                # If no text, OCR the page at low resolution to save RAM
-                if not page_text or len(page_text.strip()) < 50:
-                    try:
-                        images = convert_from_path(pdf_path, first_page=i+1, last_page=i+1, dpi=90)
-                        if images:
-                            page_text = pytesseract.image_to_string(images[0])
-                    except:
-                        page_text = "[Image page - OCR failed]"
-                
-                all_text.append({"page": i+1, "content": page_text or ""})
-        return all_text
+        doc = fitz.open(pdf_path)
+        total_pages = len(doc)
+        print(f"Heuristic Scan of {total_pages} pages...")
+        
+        for i in range(total_pages):
+            page = doc.load_page(i)
+            text = page.get_text()
+            
+            detected = []
+            for category, keywords in RISK_CATEGORIES.items():
+                if any(re.search(r'\b' + re.escape(kw) + r'\b', text, re.IGNORECASE) for kw in keywords):
+                    detected.append(category)
+            
+            if detected or i < 3: # Always include first 3 pages as potential hotspots
+                hotspots.append({
+                    "page": i + 1,
+                    "signals": detected if detected else ["Core Terms"]
+                })
+        
+        doc.close()
+        return hotspots
     except Exception as e:
-        print(f"Error in text extraction: {e}")
+        print(f"Heuristic Scan Error: {e}")
         return []
 
-def heuristic_scanner(pages):
+def analyze_cloud_first(pdf_path, hotspots):
     """
-    Scans pages for risk signals and extracts relevant windows.
-    Returns a list of high-signal text chunks.
-    """
-    high_signal_chunks = []
-    
-    # CORE FACTS: Always include first 3 pages (where most facts live)
-    fact_pages = pages[:3]
-    for p in fact_pages:
-        high_signal_chunks.append({
-            "source": f"Page {p['page']} (Core Facts Search)",
-            "text": p["content"][:4000] # Slightly larger window for facts
-        })
-
-    # RISK DISCOVERY: Scan remaining pages for traps
-    for page in pages[3:]: 
-        content = page["content"]
-        page_num = page["page"]
-        
-        found_signals = []
-        for category, keywords in RISK_CATEGORIES.items():
-            for kw in keywords:
-                if re.search(r'\b' + re.escape(kw) + r'\b', content, re.IGNORECASE):
-                    found_signals.append(category)
-                    break 
-        
-        if found_signals:
-            high_signal_chunks.append({
-                "source": f"Page {page_num} (Signals: {', '.join(found_signals)})",
-                "text": content[:3000]
-            })
-            
-    # Limit to top 15 hotspots to avoid token limits but ensure coverage
-    return high_signal_chunks[:15]
-
-def analyze_selective(signal_chunks):
-    """
-    Sends only the high-signal chunks to Gemini for selective reasoning.
+    Cloud-First Analysis:
+    1. Uploads PDF to Gemini File API.
+    2. Uses Gemini 1.5 Flash to perform the audit on Google's infrastructure.
     """
     if not client:
-        return {"error": "Gemini client not initialized"}
-
-    # Prepare the context from chunks
-    context_blocks = []
-    for chunk in signal_chunks:
-        context_blocks.append(f"--- START CLUSTER: {chunk['source']} ---\n{chunk['text']}\n--- END CLUSTER ---")
-    
-    context_text = "\n\n".join(context_blocks)
-
-    prompt = f"""
-    You are a professional loan agreement auditor. I have pre-processed a large document and extracted ONLY the high-risk sections (hotspots).
-    
-    HOTSPOT CONTEXT:
-    {context_text}
-
-    TASK:
-    Analyze these hotspots and extract:
-    1. Core Loan Facts (Interest, Amount, Term, etc. - usually in Page 1 hotspot).
-    2. Deep Red Flags (Identify predatory clauses across ALL provided hotspots).
-    3. Trust Score (0-100) and Verdict.
-
-    INSTRUCTIONS:
-    - Be extremely specific in "text_found". Extract the exact quote.
-    - Explain "reasoning" clearly for a non-lawyer.
-    - If a fact is not in the hotspots, mark as "Not detected in extract".
-
-    OUTPUT FORMAT (Strict JSON only):
-    {{
-        "document_metadata": {{ 
-            "trust_score": number, 
-            "verdict": "Safe" | "Caution" | "Critical",
-            "analysis_type": "Selective Chunk-Aware Analysis"
-        }},
-        "facts": {{
-            "Interest Rate": "string",
-            "Loan Amount": "string",
-            "Loan Term": "string",
-            "Late Penalties": "string",
-            "Collateral": "string",
-            "Jurisdiction": "string"
-        }},
-        "red_flags": [
-            {{
-                "severity": "Low" | "Medium" | "High",
-                "category": "string",
-                "text_found": "quote from document",
-                "reasoning": "human explanation"
-            }}
-        ],
-        "explainability": {{ "confidence": number, "pages_scanned": number }}
-    }}
-    """
+        return {"error": "Gemini API client not initialized"}
 
     try:
+        # 1. Upload the file to Google File API
+        print(f"Uploading {os.path.basename(pdf_path)} to Google Cloud...")
+        file_handle = client.files.upload(path=pdf_path)
+        
+        # Wait for file to be ready (usually instant for small/medium PDFs)
+        while file_handle.state == "PROCESSING":
+            time.sleep(1)
+            file_handle = client.files.get(name=file_handle.name)
+
+        # 2. Prepare the prompt with Heuristic Guidance
+        hotspot_guidance = ", ".join([f"Page {h['page']} ({'/'.join(h['signals'])})" for h in hotspots[:10]])
+        
+        prompt = f"""
+        ROLE: Professional Legal Auditor
+        TASK: Perform a forensic audit on the attached LOAN DOCUMENT.
+        
+        HEURISTIC GUIDANCE:
+        Our local scanner identified high-risk signals on the following pages: {hotspot_guidance}.
+        Please pay EXTRA attention to these pages, but perform a comprehensive audit of the ENTIRE document.
+
+        AUDIT INSTRUCTIONS:
+        1. EXTRACT CORE TERMS: Interest Rate, Amount, Term, Late Penalties, Collateral, Jurisdiction.
+        2. RISK AUDIT: Identify Predatory Clauses, Hidden Fees, Default Triggers, and Legal Waivers.
+        3. VERDICT: Provide a Trust Score (0-100) and a final Verdict (Safe/Caution/Critical).
+
+        OUTPUT FORMAT (STRICT JSON ONLY):
+        {{
+            "document_metadata": {{ "trust_score": number, "verdict": "Safe" | "Caution" | "Critical" }},
+            "facts": {{
+                "Interest Rate": "string",
+                "Loan Amount": "string",
+                "Loan Term": "string",
+                "Late Penalties": "string",
+                "Collateral": "string",
+                "Jurisdiction": "string"
+            }},
+            "red_flags": [
+                {{
+                    "severity": "Low" | "Medium" | "High",
+                    "category": "string",
+                    "text_found": "exact quote from PDF",
+                    "reasoning": "human-friendly explanation"
+                }}
+            ],
+            "explainability": {{ "confidence": number }}
+        }}
+        """
+
+        # 3. Request Analysis with the File Reference
         response = client.models.generate_content(
             model='gemini-1.5-flash',
-            contents=prompt
+            contents=[file_handle, prompt]
         )
         
-        clean_response = response.text.strip()
-        if "```json" in clean_response:
-            clean_response = clean_response.split("```json")[1].split("```")[0].strip()
-        elif "```" in clean_response:
-             clean_response = clean_response.split("```")[1].split("```")[0].strip()
+        # Clean JSON and return
+        clean_text = response.text.strip()
+        if "```json" in clean_text:
+            clean_text = clean_text.split("```json")[1].split("```")[0].strip()
+        elif "```" in clean_text:
+             clean_text = clean_text.split("```")[1].split("```")[0].strip()
         
-        parsed = json.loads(clean_response)
-        return parsed
+        # (Optional) Cleanup: delete file from cloud
+        client.files.delete(name=file_handle.name)
+        
+        return json.loads(clean_text)
+
     except Exception as e:
-        print(f"Gemini Analysis Error: {e}")
-        return {"error": f"AI Generation failed: {str(e)}"}
+        print(f"Cloud Audit Error: {e}")
+        return {"error": f"Cloud-First analysis failed: {str(e)}"}
 
 def process_document(pdf_path):
     """
-    New Architecture: Heuristic Scanning + Selective LLM Reasoning.
+    Zero-OOM Orchestrator.
+    Offloads digitization and OCR to Google Cloud.
     """
     start_time = time.time()
     
-    # 1. Full document extraction (Page-by-page to keep RAM low)
-    pages = extract_text_full_doc(pdf_path)
-    if not pages:
-        return {"error": "Could not extract text from document."}
+    # 1. Ultra-Lightweight Heuristic Scan (PyMuPDF)
+    hotspots = extract_heuristic_signals(pdf_path)
     
-    # 2. Local Heuristic Scan (Find "hotspots")
-    hotspots = heuristic_scanner(pages)
+    # 2. Cloud-Side Forensic Audit
+    final_report = analyze_cloud_first(pdf_path, hotspots)
     
-    # 3. Targeted Gemini Analysis
-    final_analysis = analyze_selective(hotspots)
-    
-    if "error" not in final_analysis:
-        final_analysis["explainability"]["pages_scanned"] = len(pages)
-        final_analysis["performance"] = {
+    if "error" not in final_report:
+        final_report["performance"] = {
             "total_time": round(time.time() - start_time, 2),
-            "method": "Selective Heuristic Overlays",
-            "chunks_processed": len(hotspots)
+            "method": "Zero-OOM Cloud-First Streaming",
+            "pages_processed": len(hotspots)
         }
     
-    return final_analysis
+    return final_report
