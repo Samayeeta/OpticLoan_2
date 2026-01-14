@@ -148,21 +148,22 @@ def analyze_document_cloud_forensic(pdf_path):
                     contents=[
                         types.Part.from_uri(file_uri=file_handle.uri, mime_type="application/pdf"),
                         types.Part.from_text(text=prompt)
-                    ]
+                    ],
+                    config=types.GenerateContentConfig(
+                        response_mime_type="application/json",
+                    )
                 )
-                if response and hasattr(response, 'text'):
+                if response and hasattr(response, 'text') and response.text:
                     print(f"Cloud Audit Success: {model_id}")
                     break
             except Exception as e:
                 err_msg = str(e)
                 print(f"Attempt Failed ({model_id}): {err_msg}")
                 last_err = e
-                # If we hit 429, it might be worth trying the next model immediately
-                # If we hit 404, it definitely means move on.
                 continue
         
-        if not response:
-            raise last_err
+        if not response or not hasattr(response, 'text') or not response.text:
+            raise Exception("Gemini returned an empty response or was blocked by safety filters.")
 
         # Immediate File Cleanup
         try: 
@@ -173,14 +174,25 @@ def analyze_document_cloud_forensic(pdf_path):
 
         # Parse JSON results
         raw_text = response.text.strip()
+        
+        # Robust JSON cleaning
         if "```json" in raw_text:
             raw_text = raw_text.split("```json")[1].split("```")[0].strip()
         elif "```" in raw_text:
              raw_text = raw_text.split("```")[1].split("```")[0].strip()
         
-        # Memory optimization: release response resources
+        # Filter out non-JSON content if any remains before the first {
+        if "{" in raw_text:
+            raw_text = raw_text[raw_text.find("{"):]
+        if "}" in raw_text:
+            raw_text = raw_text[:raw_text.rfind("}")+1]
+
+        # Memory optimization
         del response
         gc.collect()
+
+        if not raw_text:
+            raise Exception("Cleaned response text is empty.")
 
         parsed_result = json.loads(raw_text)
         if "facts" not in parsed_result: parsed_result["facts"] = {}
