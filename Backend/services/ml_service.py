@@ -128,9 +128,15 @@ def analyze_document_cloud_forensic(pdf_path):
         # 4. Generate Content (The "Slim-Audit" Strategy)
         print(f"Requesting deep audit from Gemini Cloud...")
         
-        # Stability-First Model Chain
-        # gemini-1.5-flash is the most stable and quota-friendly for long docs on free tier
-        fallback_models = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro']
+        # Comprehensive Fallback Chain (Prioritizing 2.5 Flash-Lite as requested)
+        # Using specific model IDs known to be stable in the 2026 ecosystem
+        fallback_models = [
+            'gemini-2.5-flash-lite', 
+            'gemini-2.5-flash', 
+            'gemini-2.0-flash-lite', 
+            'gemini-2.0-flash', 
+            'gemini-1.5-flash-latest'
+        ]
         response = None
         last_err = None
 
@@ -148,10 +154,11 @@ def analyze_document_cloud_forensic(pdf_path):
                     print(f"Cloud Audit Success: {model_id}")
                     break
             except Exception as e:
-                print(f"Attempt Failed ({model_id}): {str(e)}")
+                err_msg = str(e)
+                print(f"Attempt Failed ({model_id}): {err_msg}")
                 last_err = e
-                # Pause slightly to avoid hammering the API
-                time.sleep(1)
+                # If we hit 429, it might be worth trying the next model immediately
+                # If we hit 404, it definitely means move on.
                 continue
         
         if not response:
