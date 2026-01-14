@@ -144,7 +144,15 @@ def analyze_document_cloud_forensic(pdf_path):
                 continue
         
         if not response:
-            raise last_err
+            # If all failed, let's try to see WHAT models are available to this key
+            available_names = []
+            try:
+                ms = client.models.list()
+                available_names = [m.name for m in ms]
+            except:
+                available_names = ["Could not list models"]
+            
+            raise Exception(f"All models failed with 404. Available models for your key: {', '.join(available_names)}")
 
         # Cleanup Cloud File
         try: 
