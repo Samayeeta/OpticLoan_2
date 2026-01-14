@@ -9,9 +9,12 @@ import functools
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# Configure CORS more strictly
+# Configure CORS
 allowed_origin = app.config.get('ALLOWED_ORIGIN', '*')
-CORS(app, resources={r"/*": {"origins": allowed_origin}})
+CORS(app, resources={r"/*": {
+    "origins": allowed_origin,
+    "allow_headers": ["Content-Type", "X-API-Key"]
+}})
 
 # Ensure upload directory exists
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), app.config['UPLOAD_FOLDER'])
