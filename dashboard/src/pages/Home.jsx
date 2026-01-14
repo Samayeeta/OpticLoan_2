@@ -39,10 +39,14 @@ const Home = () => {
                                     <p className="text-xs text-slate-500 mt-1">Verified against Page 1 and Page 14.</p>
                                 </div>
                                 <div className="pt-2">
-                                    <div className="h-2 w-full bg-emerald-100 rounded-full overflow-hidden">
-                                        <div className="h-full bg-emerald-500 w-full animate-pulse"></div>
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                        <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Audit Secure & Complete</p>
                                     </div>
-                                    <p className="text-[10px] font-bold text-slate-400 mt-2">AUDIT SCORE: 98/100</p>
+                                    <div className="h-1.5 w-full bg-emerald-50 rounded-full overflow-hidden border border-emerald-100">
+                                        <div className="h-full bg-emerald-500 w-full"></div>
+                                    </div>
+                                    <p className="text-[10px] font-bold text-slate-400 mt-2 lowercase">Forensic Score: 98/100</p>
                                 </div>
                             </div>
                         </div>

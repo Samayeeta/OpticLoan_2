@@ -81,7 +81,7 @@ const Dashboard = () => {
                     <div className="bg-white p-7 rounded shadow-[0_2px_10px_rgba(0,0,0,0.04)] border-b-[6px] border-emerald-400">
                         <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">FACTS EXTRACTED</p>
                         <p className="text-4xl font-black text-[#003366] mb-2">{Object.keys(facts || {}).length}</p>
-                        <p className="text-[10px] text-slate-400 font-bold leading-tight">Core financial terms identified by DistilBERT</p>
+                        <p className="text-[10px] text-slate-400 font-bold leading-tight">Primary financial markers identified</p>
                     </div>
                     {/* Stat 2 */}
                     <div className="bg-white p-7 rounded shadow-[0_2px_10px_rgba(0,0,0,0.04)] border-b-[6px] border-red-500">

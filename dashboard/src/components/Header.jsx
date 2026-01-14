@@ -63,9 +63,6 @@ const Header = () => {
                     </div>
 
                     <div className="hidden sm:flex gap-2">
-                        <button className="px-3 py-1.5 text-xs font-bold text-[#003366] border-2 border-[#003366] rounded hover:bg-gray-50 transition-colors uppercase">
-                            LOG IN
-                        </button>
                         <Link to="/get-started" className="px-3 py-1.5 text-xs font-bold text-white bg-[#003366] rounded hover:bg-[#002244] shadow-md transition-all uppercase">
                             START
                         </Link>
@@ -101,9 +98,6 @@ const Header = () => {
                             </li>
                         ))}
                         <li className="pt-4 flex flex-col gap-3">
-                            <button className="w-full px-4 py-3 text-sm font-bold text-[#003366] border-2 border-[#003366] rounded uppercase">
-                                LOG IN
-                            </button>
                             <Link
                                 to="/get-started"
                                 onClick={() => setIsMenuOpen(false)}
