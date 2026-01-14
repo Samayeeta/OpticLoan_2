@@ -7,6 +7,8 @@ from google import genai
 from google.genai import types
 from config import Config
 
+import gc
+
 # Configure Gemini Client
 client = None
 if Config.GEMINI_API_KEY:
@@ -19,19 +21,25 @@ else:
 
 def extract_heuristic_guidance(pdf_path):
     """
-    Scans the first 10 pages for keywords to guide the AI.
-    Very fast, low RAM.
+    Ultra-Slim Scan: Only looks at VERY first pages to save RAM.
+    The real audit happens purely in the cloud.
     """
     signals = []
     try:
+        # Open with as-needed access
         doc = fitz.open(pdf_path)
-        for i in range(min(10, len(doc))):
-            text = doc[i].get_text()
-            if "default" in text.lower() or "penalty" in text.lower() or "fee" in text.lower():
+        # Only scan first 3 pages to stay under 512MB RAM on Render
+        for i in range(min(3, len(doc))):
+            page = doc[i]
+            text = page.get_text().lower()
+            if "default" in text or "penalty" in text or "late" in text or "collateral" in text:
                 signals.append(f"Page {i+1}")
         doc.close()
-    except:
-        pass
+    except Exception as e:
+        print(f"Heuristic Scan Skip: {e}")
+    
+    # Force RAM cleanup
+    gc.collect()
     return ", ".join(signals) if signals else "General Audit"
 
 def analyze_document_cloud_forensic(pdf_path):
@@ -117,17 +125,18 @@ def analyze_document_cloud_forensic(pdf_path):
         }}
         """
 
-        # 4. Generate Content (Using gemini-2.0-flash for high compatibility)
-        print(f"Requesting deep audit from Gemini...")
+        # 4. Generate Content (The "Slim-Audit" Strategy)
+        print(f"Requesting deep audit from Gemini Cloud...")
         
-        # Comprehensive Fallback Chain (Prioritizing 2.5 as requested)
-        fallback_models = ['gemini-2.5-flash', 'gemini-2.0-flash', 'learnlm-1.5-pro-experimental', 'gemini-1.5-flash-002', 'gemini-1.5-flash']
+        # Stability-First Model Chain
+        # gemini-1.5-flash is the most stable and quota-friendly for long docs on free tier
+        fallback_models = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro']
         response = None
         last_err = None
 
         for model_id in fallback_models:
             try:
-                print(f"Attempting audit with model: {model_id}...")
+                print(f"Audit attempt with {model_id}...")
                 response = client.models.generate_content(
                     model=model_id,
                     contents=[
@@ -135,43 +144,38 @@ def analyze_document_cloud_forensic(pdf_path):
                         types.Part.from_text(text=prompt)
                     ]
                 )
-                if response:
-                    print(f"Successfully analyzed with {model_id}")
+                if response and hasattr(response, 'text'):
+                    print(f"Cloud Audit Success: {model_id}")
                     break
             except Exception as e:
-                print(f"Model {model_id} failed: {str(e)}")
+                print(f"Attempt Failed ({model_id}): {str(e)}")
                 last_err = e
-                # Explicitly handle 429 by waiting or moving on? 
-                # For now, move on to the next model in the chain.
+                # Pause slightly to avoid hammering the API
+                time.sleep(1)
                 continue
         
         if not response:
-            # If all failed, let's try to see WHAT models are available to this key
-            available_names = []
-            try:
-                ms = client.models.list()
-                available_names = [m.name for m in ms]
-            except:
-                available_names = ["Could not list models"]
-            
-            raise Exception(f"All models failed with 404. Available models for your key: {', '.join(available_names)}")
+            raise last_err
 
-        # Cleanup Cloud File
+        # Immediate File Cleanup
         try: 
             client.files.delete(name=file_handle.name)
-            print("Cloud file cleaned up.")
+            print("Cloud storage released.")
         except: 
             pass
 
-        # Parse JSON
-        clean_text = response.text.strip()
-        if "```json" in clean_text:
-            clean_text = clean_text.split("```json")[1].split("```")[0].strip()
-        elif "```" in clean_text:
-             clean_text = clean_text.split("```")[1].split("```")[0].strip()
+        # Parse JSON results
+        raw_text = response.text.strip()
+        if "```json" in raw_text:
+            raw_text = raw_text.split("```json")[1].split("```")[0].strip()
+        elif "```" in raw_text:
+             raw_text = raw_text.split("```")[1].split("```")[0].strip()
         
-        parsed_result = json.loads(clean_text)
-        # Ensure we always return at least some facts/flags even if empty keys
+        # Memory optimization: release response resources
+        del response
+        gc.collect()
+
+        parsed_result = json.loads(raw_text)
         if "facts" not in parsed_result: parsed_result["facts"] = {}
         if "red_flags" not in parsed_result: parsed_result["red_flags"] = []
         
@@ -179,6 +183,7 @@ def analyze_document_cloud_forensic(pdf_path):
 
     except Exception as e:
         print(f"Forensic Audit Error: {str(e)}")
+        # If we failed due to a real error, at least return a clean error object
         return {"error": f"Cloud Audit Failed: {str(e)}"}
 
 def process_document(pdf_path):

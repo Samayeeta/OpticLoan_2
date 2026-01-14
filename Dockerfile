@@ -27,6 +27,6 @@ EXPOSE 5000
 # Set environment variables for Render
 ENV PYTHONUNBUFFERED=1
 
-# Run the application with a single worker for maximum stability
+# Run the application with a single worker and high timeout for stability
 # Use the PORT environment variable if available, otherwise default to 5000
-CMD gunicorn --workers 1 --bind 0.0.0.0:${PORT:-5000} app:app
+CMD gunicorn --workers 1 --timeout 300 --bind 0.0.0.0:${PORT:-5000} app:app
