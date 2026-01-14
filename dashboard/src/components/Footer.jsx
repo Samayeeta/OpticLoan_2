@@ -30,7 +30,7 @@ const Footer = () => {
                         <h4 className="text-xs font-black uppercase tracking-[0.2em] mb-8 text-blue-200">Company</h4>
                         <ul className="space-y-4 text-sm font-bold text-white/70">
                             <li><Link to="/expert-advice" className="hover:text-white transition-colors">Expert Advice</Link></li>
-                            <li><a href="#" className="hover:text-white transition-colors">About OpticLoan</a></li>
+                            <li><Link to="/about" className="hover:text-white transition-colors">About OpticLoan</Link></li>
                         </ul>
                     </div>
                 </div>
