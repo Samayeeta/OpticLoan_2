@@ -14,17 +14,6 @@ const Header = () => {
 
     return (
         <header className="fixed top-0 left-0 w-full z-[1000] bg-white border-b-4 border-[#003366] shadow-sm">
-            {/* Top Bar: Official Website disclaimer */}
-            <div className="w-full bg-[#f0f0f0] py-1 border-b border-gray-200">
-                <div className="w-[95%] max-w-7xl mx-auto flex justify-between items-center text-[11px] font-medium text-gray-600 uppercase tracking-wider">
-                    <span className="truncate">Precision Loan Document Auditing System</span>
-                    <div className="hidden sm:flex gap-4">
-                        <button className="hover:underline">Legal Standards</button>
-                        <button className="hover:underline">Transparency Mode</button>
-                    </div>
-                </div>
-            </div>
-
             {/* Main Header */}
             <div className="w-[95%] max-w-7xl mx-auto h-20 flex justify-between items-center">
 

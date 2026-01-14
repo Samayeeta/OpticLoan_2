@@ -16,11 +16,66 @@ const About = () => {
                 </div>
             </section>
 
-            {/* Core Values */}
+            {/* Comparative Advantage */}
+            <section className="py-24 px-6 bg-[#F8FAFC]">
+                <div className="max-w-7xl mx-auto">
+                    <div className="text-center mb-16">
+                        <h2 className="text-3xl font-black text-[#003366] uppercase tracking-tighter mb-4">OPTICLOAN vs. TRADITIONAL AI</h2>
+                        <p className="text-slate-500 font-medium max-w-2xl mx-auto uppercase text-[10px] tracking-widest">Bridging the gap between raw text processing and forensic intelligence.</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {/* Traditional AI Box */}
+                        <div className="bg-white p-10 rounded-3xl border-2 border-slate-100 opacity-60">
+                            <h4 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-6">Traditional AI Apps</h4>
+                            <ul className="space-y-6">
+                                <li className="flex gap-4">
+                                    <span className="text-red-400 text-xl">✕</span>
+                                    <div>
+                                        <p className="font-bold text-slate-700">Local Memory Limitations</p>
+                                        <p className="text-xs text-slate-500 leading-relaxed">Standard apps struggle with 50+ page documents, often "forgetting" early context due to limited local RAM (OOM errors).</p>
+                                    </div>
+                                </li>
+                                <li className="flex gap-4">
+                                    <span className="text-red-400 text-xl">✕</span>
+                                    <div>
+                                        <p className="font-bold text-slate-700">Surface-Level Scanning</p>
+                                        <p className="text-xs text-slate-500 leading-relaxed">They use broad LLM prompts that miss subtle "cross-default" or "acceleration" clauses hidden in legal boilerplate.</p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+
+                        {/* OpticLoan Box */}
+                        <div className="bg-white p-10 rounded-3xl border-4 border-[#003366] shadow-2xl relative">
+                            <div className="absolute -top-4 -right-4 bg-amber-500 text-white text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-widest">The Forensic Choice</div>
+                            <h4 className="text-sm font-black text-[#003366] uppercase tracking-widest mb-6">OpticLoan Forensic</h4>
+                            <ul className="space-y-6">
+                                <li className="flex gap-4">
+                                    <span className="text-emerald-500 text-xl">✓</span>
+                                    <div>
+                                        <p className="font-bold text-[#003366]">Cloud-Native Memory Handling</p>
+                                        <p className="text-xs text-slate-600 leading-relaxed">By leveraging our specialized cloud infrastructure, we scan the entire document simultaneously. We don't suffer from local memory leaks, ensuring every page is audited with equal precision.</p>
+                                    </div>
+                                </li>
+                                <li className="flex gap-4">
+                                    <span className="text-emerald-500 text-xl">✓</span>
+                                    <div>
+                                        <p className="font-bold text-[#003366]">Boolean-Weighted Auditing</p>
+                                        <p className="text-xs text-slate-600 leading-relaxed">Our engine doesn't just summarize; it cross-references every sentence against binary markers for predatory behavior, providing legal-grade reasoning for every red flag found.</p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Core Mission */}
             <section className="py-24 px-6 max-w-7xl mx-auto">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
                     <div>
-                        <h2 className="text-3xl font-black text-[#003366] mb-8 uppercase tracking-tight">WHY OPTICLOAN?</h2>
+                        <h2 className="text-3xl font-black text-[#003366] mb-8 uppercase tracking-tight">WHY WE EXIST</h2>
                         <div className="space-y-8">
                             <div>
                                 <h4 className="text-xl font-bold text-[#003366] mb-2">Forensic Accuracy</h4>
@@ -29,23 +84,17 @@ const About = () => {
                                 </p>
                             </div>
                             <div>
-                                <h4 className="text-xl font-bold text-[#003366] mb-2">Privacy First</h4>
+                                <h4 className="text-xl font-bold text-[#003366] mb-2">Isolated Security</h4>
                                 <p className="text-slate-600 leading-relaxed">
-                                    Security is in our DNA. We use bank-grade encryption and isolated sandboxes to ensure your financial documents are analyzed safely and never permanently stored.
-                                </p>
-                            </div>
-                            <div>
-                                <h4 className="text-xl font-bold text-[#003366] mb-2">Empowering Borrowers</h4>
-                                <p className="text-slate-600 leading-relaxed">
-                                    We provide you with the same deep-dive capabilities used by institutional analysts, putting the power of high-level auditing back into the hands of the consumer.
+                                    Privacy is non-negotiable. Documents are processed in hardware-isolated environments and wiped immediately after the forensic audit is generated.
                                 </p>
                             </div>
                         </div>
                     </div>
-                    <div className="bg-slate-50 p-12 rounded-[3rem] border-4 border-[#003366] shadow-xl relative overflow-hidden">
-                        <div className="absolute top-0 right-0 p-8 text-6xl opacity-10">⚖️</div>
-                        <h3 className="text-[10px] font-black text-[#003366] uppercase tracking-[0.4em] mb-4">The Standard</h3>
-                        <p className="text-3xl font-black text-[#003366] leading-tight mb-8">
+                    <div className="bg-[#003366] p-12 rounded-[3.5rem] shadow-2xl relative overflow-hidden group">
+                        <div className="absolute inset-0 bg-blue-900 opacity-0 group-hover:opacity-10 transition-opacity"></div>
+                        <h3 className="text-[10px] font-black text-blue-300 uppercase tracking-[0.4em] mb-4">THE OPTICLOAN PROMISE</h3>
+                        <p className="text-3xl font-black text-white leading-tight mb-8">
                             "Transparency is not a feature; it is a fundamental financial right."
                         </p>
                         <div className="h-2 w-24 bg-amber-500 rounded-full"></div>
