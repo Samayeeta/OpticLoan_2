@@ -117,15 +117,30 @@ def analyze_document_cloud_forensic(pdf_path):
         }}
         """
 
-        # 4. Generate Content (Using the most stable model ID)
+        # 4. Generate Content (Using 'gemini-1.5-flash-latest' for stability)
         print(f"Requesting deep audit from Gemini...")
-        response = client.models.generate_content(
-            model='gemini-1.5-flash',
-            contents=[
-                types.Part.from_uri(file_uri=file_handle.uri, mime_type="application/pdf"),
-                types.Part.from_text(text=prompt)
-            ]
-        )
+        model_id = 'gemini-1.5-flash-latest'
+        
+        try:
+            response = client.models.generate_content(
+                model=model_id,
+                contents=[
+                    types.Part.from_uri(file_uri=file_handle.uri, mime_type="application/pdf"),
+                    types.Part.from_text(text=prompt)
+                ]
+            )
+        except Exception as api_err:
+            if "404" in str(api_err):
+                print(f"Model {model_id} not found, falling back to gemini-1.5-flash-002...")
+                response = client.models.generate_content(
+                    model='gemini-1.5-flash-002',
+                    contents=[
+                        types.Part.from_uri(file_uri=file_handle.uri, mime_type="application/pdf"),
+                        types.Part.from_text(text=prompt)
+                    ]
+                )
+            else:
+                raise api_err
 
         # Cleanup Cloud File
         try: 
