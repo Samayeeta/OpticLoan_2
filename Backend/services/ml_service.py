@@ -43,44 +43,54 @@ def analyze_document_cloud_forensic(pdf_path):
         return {"error": "Gemini API client not initialized. Check your API Key."}
 
     try:
-        # 1. Local Guidance
+        # 1. Local Guidance (Scan first 15 pages for deeper context)
         guidance = extract_heuristic_guidance(pdf_path)
         
         # 2. Upload to Cloud
         print(f"Uploading {os.path.basename(pdf_path)} to Google Forensic Cloud...")
         file_handle = client.files.upload(file=pdf_path)
         
-        # Wait for file to reach ACTIVE state
+        # Wait for file to reach ACTIVE state (Mandatory for successful analysis)
+        print(f"Gemini processing PDF on cloud infrastructure...")
         attempts = 0
-        while file_handle.state == "PROCESSING" and attempts < 30:
+        while file_handle.state != "ACTIVE" and attempts < 60:
+            if file_handle.state == "FAILED":
+                return {"error": "Google Cloud failed to process this PDF. The file might be corrupted or in an unsupported format."}
             time.sleep(2)
             file_handle = client.files.get(name=file_handle.name)
             attempts += 1
-            print(f"File status: {file_handle.state}...")
+            
+        if file_handle.state != "ACTIVE":
+             return {"error": "Cloud processing timed out. The document is too complex for the current session."}
 
-        if file_handle.state == "FAILED":
-             return {"error": "Google Cloud failed to process this PDF. It might be corrupted or too large."}
-
-        # 3. Deep Forensic Prompt
+        # 3. Deep Forensic Prompt (Aggressive & Mandatory)
         prompt = f"""
-        ROLE: Senior Legal Forensic Auditor (Ex-Goldman Sachs / Top-Tier Law Firm).
+        ROLE: Lead Forensic Auditor & Legal Strategist.
         
-        TASK: 
-        Perform a RIGOROUS audit of the attached loan agreement.
-        You MUST identify at least 5-10 specific traps, risks, or borrower disadvantages. 
-        If the document is safe, you must still identify the 5 most restrictive clauses.
-        
-        GUIDANCE:
-        Local scan flagged high-activity on: {guidance}.
+        CRITICAL MISSION: 
+        Analyze the ATTACHED 50+ page loan document. 
+        You are being hired to protect the borrower from unfair terms. 
 
-        AUDIT REQUIREMENTS:
-        1. CORE FACTS: Interest Rate (APR), Amount, Term, Late Fees, Collateral, Jurisdiction.
-        2. TRAPS & RED FLAGS (MANDATORY: Minimum 5): 
-           - Look for: Personal Guarantees, Acceleration, Confession of Judgment, Prepayment Penalties, Asset Seizure, Arbitration Waivers.
-           - Provide the EXACT QUOTE for each.
-        3. EXECUTIVE SUMMARY: A sharp 3-sentence summary of the 'Deadliest Trap' in this deal.
+        GUIDANCE:
+        Our preliminary scan found high activity on: {guidance}. 
+        However, you MUST scan the ENTIRE document from Page 1 to the end.
+
+        AUDIT MANDATE (DO NOT FAIL THESE):
+        1. YOU MUST FIND AND EXTRACT AT LEAST 5-10 RED FLAGS. 
+        Identify even the most subtle disadvantages (e.g., specific wording in "Defaults", "Governing Law", "Indemnification", "Arbitration").
         
-        STRICT JSON OUTPUT FORMAT ONLY:
+        2. FOR EACH RED FLAG:
+           - Provide a precise 'category'.
+           - Extract the EXACT QUOTE from the document.
+           - Explain the 'reasoning' in "scary" terms—what happens to the borrower if things go wrong?
+
+        3. CORE FACTS:
+           - Extract Interest Rate (APR), Loan Amount, Term, Late Fees, and Collateral.
+
+        4. EXECUTIVE SUMMARY:
+           - Write a sharp, 3-sentence summary of the "Hidden Killers" in this agreement.
+
+        OUTPUT FORMAT (STRICT JSON ONLY):
         {{
             "document_metadata": {{ 
                 "trust_score": number, 
@@ -99,8 +109,8 @@ def analyze_document_cloud_forensic(pdf_path):
                 {{
                     "severity": "Low" | "Medium" | "High",
                     "category": "string",
-                    "text_found": "EXACT QUOTE",
-                    "reasoning": "Detailed legal implication for the borrower"
+                    "text_found": "QUOTED TEXT",
+                    "reasoning": "Legal and financial implication"
                 }}
             ],
             "explainability": {{ "confidence": number }}
