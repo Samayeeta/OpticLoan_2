@@ -32,9 +32,6 @@ const Technology = () => {
                         <Link to="/upload" className="px-8 py-4 bg-white text-[#003366] font-black rounded-xl hover:bg-blue-50 transition-all uppercase tracking-widest shadow-xl">
                             Deploy Analysis
                         </Link>
-                        <button className="px-8 py-4 bg-transparent border-2 border-white/30 text-white font-black rounded-xl hover:bg-white/10 transition-all uppercase tracking-widest">
-                            View Whitepaper
-                        </button>
                     </div>
                 </div>
             </section>

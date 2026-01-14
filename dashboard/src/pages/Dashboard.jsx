@@ -59,108 +59,108 @@ const Dashboard = () => {
     const auditScore = document_metadata?.trust_score || 0;
 
     return (
-        <div className="min-h-screen bg-[#F0F2F5] pb-24 font-sans text-slate-900">
+        <div className="min-h-screen bg-[#F0F2F5] pb-32 font-sans text-slate-900">
             {/* Minimal Header from Screenshot */}
-            <div className="max-w-[1300px] mx-auto px-6 pt-10 mb-8 flex items-start justify-between">
+            <div className="max-w-[1300px] mx-auto px-10 pt-16 mb-12 flex items-start justify-between">
                 <div>
-                    <h1 className="text-[26px] font-black text-[#003366] tracking-tight leading-none mb-1">LOAN ANALYSIS REPORT</h1>
-                    <p className="text-xs italic text-slate-400 font-semibold">{filename}</p>
+                    <h1 className="text-[32px] font-black text-[#003366] tracking-tight leading-none mb-2">LOAN ANALYSIS REPORT</h1>
+                    <p className="text-xs italic text-slate-400 font-semibold uppercase tracking-widest">{filename}</p>
                 </div>
                 <button
                     onClick={() => navigate('/')}
-                    className="px-6 py-2.5 bg-[#003366] text-white text-[11px] font-black rounded hover:bg-[#002244] transition-all uppercase tracking-widest shadow-sm"
+                    className="px-8 py-3 bg-[#003366] text-white text-[11px] font-black rounded hover:bg-[#002244] transition-all uppercase tracking-widest shadow-lg"
                 >
                     NEW ANALYSIS
                 </button>
             </div>
 
-            <div className="max-w-[1300px] mx-auto px-6">
-                {/* 3-Part Stats Row (Exact Style) */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div className="max-w-[1300px] mx-auto px-10">
+                {/* 3-Part Stats Row (De-cluttered Style) */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-16">
                     {/* Stat 1 */}
-                    <div className="bg-white p-7 rounded shadow-[0_2px_10px_rgba(0,0,0,0.04)] border-b-[6px] border-emerald-400">
-                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">FACTS EXTRACTED</p>
-                        <p className="text-4xl font-black text-[#003366] mb-2">{Object.keys(facts || {}).length}</p>
-                        <p className="text-[10px] text-slate-400 font-bold leading-tight">Primary financial markers identified</p>
+                    <div className="bg-white p-10 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border-b-[6px] border-emerald-400 transition-transform hover:-translate-y-1">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">FACTS EXTRACTED</p>
+                        <p className="text-5xl font-black text-[#003366] mb-3">{Object.keys(facts || {}).length}</p>
+                        <p className="text-[11px] text-slate-400 font-bold leading-tight uppercase">Primary financial markers identified</p>
                     </div>
                     {/* Stat 2 */}
-                    <div className="bg-white p-7 rounded shadow-[0_2px_10px_rgba(0,0,0,0.04)] border-b-[6px] border-red-500">
-                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">RED FLAGS</p>
-                        <p className="text-4xl font-black text-red-600 mb-2">{red_flags?.length || 0}</p>
-                        <p className="text-[10px] text-slate-400 font-bold leading-tight">Potential risks detected in the agreement</p>
+                    <div className="bg-white p-10 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border-b-[6px] border-red-500 transition-transform hover:-translate-y-1">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">RED FLAGS</p>
+                        <p className="text-5xl font-black text-red-600 mb-3">{red_flags?.length || 0}</p>
+                        <p className="text-[11px] text-slate-400 font-bold leading-tight uppercase">Potential risks detected in the agreement</p>
                     </div>
                     {/* Stat 3 */}
-                    <div className="bg-white p-7 rounded shadow-[0_2px_10px_rgba(0,0,0,0.04)] border-b-[6px] border-[#003366]">
-                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">VERDICT & TRUST</p>
-                        <div className="flex items-center gap-4">
-                            <span className={`text-[26px] font-black uppercase ${auditScore > 70 ? 'text-emerald-500' : 'text-red-600'}`}>
+                    <div className="bg-white p-10 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border-b-[6px] border-[#003366] transition-transform hover:-translate-y-1">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">VERDICT & TRUST</p>
+                        <div className="flex items-center gap-6">
+                            <span className={`text-[32px] font-black uppercase ${auditScore > 70 ? 'text-emerald-500' : 'text-red-600'}`}>
                                 {document_metadata?.verdict || "CRITICAL"}
                             </span>
-                            <div className="w-px h-6 bg-slate-200"></div>
-                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                            <div className="w-px h-8 bg-slate-200"></div>
+                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
                                 Confidence: {Math.round((explainability?.confidence ?? 0.46) * 100)}%
                             </span>
                         </div>
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
                     {/* LEFT PAGE: EXTRACTED TERMS */}
                     <div className="lg:col-span-5">
-                        <div className="bg-white rounded-xl shadow-[0_2px_15px_rgba(0,0,0,0.03)] border border-slate-100 overflow-hidden">
-                            <div className="px-7 py-5 border-b border-slate-100 flex items-center gap-3 bg-[#F9FBFC]">
-                                <span className="text-lg">📋</span>
-                                <h2 className="text-[12px] font-black text-[#003366] uppercase tracking-[0.1em]">EXTRACTED TERMS</h2>
+                        <div className="bg-white rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.02)] border border-slate-100 overflow-hidden">
+                            <div className="px-10 py-7 border-b border-slate-100 flex items-center gap-4 bg-[#F9FBFC]">
+                                <span className="text-xl">📋</span>
+                                <h2 className="text-[14px] font-black text-[#003366] uppercase tracking-[0.2em]">EXTRACTED TERMS</h2>
                             </div>
                             <div className="divide-y divide-slate-100">
                                 {Object.entries(facts || {}).map(([label, value], i) => (
-                                    <div key={label} className="px-7 py-6 flex items-center justify-between group transition-colors hover:bg-slate-50">
-                                        <div className="flex flex-col gap-1">
-                                            <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest leading-none mb-1">{label}</p>
-                                            <p className="text-[15px] font-black text-slate-800 leading-tight">{value}</p>
+                                    <div key={label} className="px-10 py-8 flex items-center justify-between group transition-all hover:bg-slate-50">
+                                        <div className="flex flex-col gap-2">
+                                            <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] leading-none mb-1">{label}</p>
+                                            <p className="text-[17px] font-black text-slate-800 leading-tight">{value}</p>
                                         </div>
-                                        <div className="text-right flex flex-col items-end opacity-20 group-hover:opacity-100 transition-opacity">
-                                            <span className="text-[8px] font-black text-slate-400 tracking-tighter uppercase leading-none">LOCAL AI</span>
-                                            <span className="text-[8px] font-black text-slate-400 tracking-tighter uppercase leading-none">ANALYSIS</span>
+                                        <div className="text-right flex flex-col items-end opacity-0 group-hover:opacity-40 transition-all transform translate-x-2 group-hover:translate-x-0">
+                                            <span className="text-[8px] font-black text-[#003366] tracking-tighter uppercase leading-none">FORENSIC</span>
+                                            <span className="text-[8px] font-black text-[#003366] tracking-tighter uppercase leading-none">VERIFIED</span>
                                         </div>
                                     </div>
                                 ))}
                                 {(!facts || Object.keys(facts).length === 0) && (
-                                    <div className="p-12 text-center text-slate-300 font-bold uppercase text-[10px] tracking-widest">No terms detected</div>
+                                    <div className="p-20 text-center text-slate-300 font-bold uppercase text-[10px] tracking-widest">No terms detected</div>
                                 )}
                             </div>
                         </div>
                     </div>
 
                     {/* RIGHT PAGE: TRAP FEED */}
-                    <div className="lg:col-span-7 space-y-6">
+                    <div className="lg:col-span-7 space-y-10">
                         {red_flags && red_flags.length > 0 ? (
                             red_flags.map((flag, idx) => (
-                                <div key={idx} className={`bg-white rounded-xl shadow-sm border border-slate-100 border-l-[6px] ${flag.severity === 'High' ? 'border-l-red-500' : 'border-l-amber-400'} overflow-hidden`}>
+                                <div key={idx} className={`bg-white rounded-2xl shadow-xl border border-slate-100 border-l-[8px] ${flag.severity === 'High' ? 'border-l-red-500' : 'border-l-amber-400'} overflow-hidden transition-all hover:shadow-2xl`}>
                                     {/* Header with Amber BG */}
-                                    <div className="px-7 py-4 bg-[#FFF9E7] border-b border-slate-100 flex items-center justify-between">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-5 h-5 rounded-full border-2 border-amber-500 flex items-center justify-center text-amber-600 font-bold text-xs ring-1 ring-amber-100">!</div>
-                                            <h3 className="text-[12px] font-black text-[#855B00] uppercase tracking-wider">
+                                    <div className="px-10 py-6 bg-[#FFF9E7] border-b border-slate-100 flex items-center justify-between">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-6 h-6 rounded-full border-2 border-amber-500 flex items-center justify-center text-amber-600 font-bold text-xs shadow-sm bg-white">!</div>
+                                            <h3 className="text-[14px] font-black text-[#855B00] uppercase tracking-widest">
                                                 {flag.category}: POTENTIAL RISK
                                             </h3>
                                         </div>
-                                        <div className="bg-[#FFEBB2] px-3 py-1 rounded text-[9px] font-black text-[#855B00] uppercase tracking-widest ring-1 ring-[#FBD38D]">
-                                            {flag.severity} RISK
+                                        <div className="bg-[#FFEBB2] px-4 py-1.5 rounded-full text-[10px] font-black text-[#855B00] uppercase tracking-widest ring-2 ring-white shadow-sm">
+                                            {flag.severity} SEVERITY
                                         </div>
                                     </div>
 
-                                    <div className="p-7">
+                                    <div className="p-10">
                                         {/* Dark Block Quote */}
-                                        <div className="bg-[#0B1226] p-7 rounded mb-6 relative border-l-4 border-[#1E293B]">
-                                            <p className="text-[13px] font-medium text-slate-200 leading-relaxed italic">
+                                        <div className="bg-[#0B1226] p-10 rounded-2xl mb-10 relative border-l-4 border-amber-500 shadow-inner">
+                                            <p className="text-[15px] font-medium text-blue-100 leading-relaxed italic">
                                                 "{flag.text_found || "Reference terms extracted from document stream."}"
                                             </p>
                                         </div>
 
-                                        <div className="space-y-2">
-                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">REASONING & IMPLICATION</p>
-                                            <p className="text-[14px] font-bold text-slate-600 leading-relaxed capitalize">
+                                        <div className="space-y-4">
+                                            <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">REASONING & FORENSIC IMPLICATION</p>
+                                            <p className="text-[16px] font-bold text-slate-600 leading-relaxed">
                                                 {flag.reasoning}
                                             </p>
                                         </div>
@@ -168,17 +168,20 @@ const Dashboard = () => {
                                 </div>
                             ))
                         ) : (
-                            <div className="bg-white p-24 rounded-xl border-4 border-dashed border-slate-100 text-center">
-                                <p className="text-[10px] font-black text-slate-200 uppercase tracking-[0.6em]">Audit Pipeline: 100% Clean</p>
+                            <div className="bg-white p-32 rounded-3xl border-4 border-dashed border-slate-100 text-center">
+                                <p className="text-[12px] font-black text-slate-300 uppercase tracking-[0.8em] animate-pulse">Audit Pipeline: 100% Clean</p>
                             </div>
                         )}
                     </div>
                 </div>
 
                 {/* Secure Footer */}
-                <div className="mt-40 mb-12 flex flex-col items-center gap-6 opacity-30 select-none pointer-events-none">
-                    <div className="h-px w-24 bg-slate-300"></div>
-                    <p className="text-[10px] font-black text-[#003366] uppercase tracking-[0.8em]">OpticLoan Intelligence • Forensic v2.9 SECURE</p>
+                <div className="mt-60 mb-20 flex flex-col items-center gap-8 opacity-20 select-none pointer-events-none">
+                    <div className="h-px w-32 bg-slate-300"></div>
+                    <div className="flex flex-col items-center gap-2">
+                        <p className="text-[10px] font-black text-[#003366] uppercase tracking-[1em]">OpticLoan Intelligence • Forensic v2.9 SECURE</p>
+                        <p className="text-[8px] font-bold text-slate-400 uppercase tracking-[0.5em]">Isolated Sandbox Environment • Zero Persistence Mode</p>
+                    </div>
                 </div>
             </div>
         </div>
