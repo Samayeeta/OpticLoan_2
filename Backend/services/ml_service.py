@@ -120,8 +120,8 @@ def analyze_document_cloud_forensic(pdf_path):
         # 4. Generate Content (Using gemini-2.0-flash for high compatibility)
         print(f"Requesting deep audit from Gemini...")
         
-        # Comprehensive Fallback Chain
-        fallback_models = ['gemini-2.0-flash', 'gemini-1.5-flash-002', 'gemini-1.5-pro', 'gemini-1.5-flash']
+        # Comprehensive Fallback Chain (Prioritizing 2.5 as requested)
+        fallback_models = ['gemini-2.5-flash', 'gemini-2.0-flash', 'learnlm-1.5-pro-experimental', 'gemini-1.5-flash-002', 'gemini-1.5-flash']
         response = None
         last_err = None
 
@@ -141,6 +141,8 @@ def analyze_document_cloud_forensic(pdf_path):
             except Exception as e:
                 print(f"Model {model_id} failed: {str(e)}")
                 last_err = e
+                # Explicitly handle 429 by waiting or moving on? 
+                # For now, move on to the next model in the chain.
                 continue
         
         if not response:
