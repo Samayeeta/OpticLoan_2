@@ -28,5 +28,5 @@ COPY Backend/ .
 # Expose the port the app runs on
 EXPOSE 5000
 
-# Run the application with gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
+# Run the application with a single worker to save memory
+CMD ["gunicorn", "--workers", "1", "--bind", "0.0.0.0:5000", "app:app"]

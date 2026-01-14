@@ -5,5 +5,5 @@ python-dotenv
 pytesseract
 pdf2image
 Pillow
-google-generativeai
+google-genai
 pdfplumber
