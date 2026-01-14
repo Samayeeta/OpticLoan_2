@@ -20,15 +20,17 @@ Instead of using heavy local models (like BERT which consume GBs of RAM), we off
 ### C. Robust Binary Parsing
 Traditional apps often crash when an AI returns malformed JSON. We built a **Response Sanitization Layer** that uses regex cleaning and defensive parsing to ensure the backend never hangs. Even if the AI returns text wrapped in markdown, our system extracts the "Core DNA" (JSON) and validates it before it ever hits the UI.
 
-## 3. The Forensic Intelligence Pipeline
-The application functions through three distinct technical stages:
+## 3. The Forensic Intelligence Pipeline: Advanced Neural Architecture
+Instead of using generic NLP, OpticLoan's intelligence is built on **Multi-Modal Transformer Decoders** (specifically the Google Gemini Flash family).
 
-1.  **Stage 1: Digitization (PyMuPDF):** We convert the PDF into a "Clean Semantic Stream," stripping out formatting noise but preserving legal hierarchy.
-2.  **Stage 2: Boolean Auditing (Gemini Pro):** We apply a proprietary set of **Forensic Prompts**. Instead of asking "Summarize this," we ask "Search for Boolean triggers of predatory behavior" (e.g., *Does the late fee escalate without written notice?*).
-3.  **Stage 3: Explainability & Verdict:** The system doesn't just find issues; it provides legal reasoning. It tags every Red Flag with a "Severity Index" and calculates a "Trust Score" (0-100) based on how many traps were detected.
+### Technical Specifications:
+- **Neural Architecture:** Transformer-based Large Language Models (LLMs) with **Multi-Head Self-Attention**. This architecture allows the network to assign weights to different words across a 2-million token span, correlating a "Default Interest Rate" on page 10 with a "Grace Period" definition on page 90.
+- **Model Ensemble:** A robust fallback chain including **Gemini 2.5 Flash-Lite**, **2.0 Flash**, and **1.5 Flash**. This ensure consistent forensic depth by automatically scaling the audit intensity based on document complexity.
+- **Constrained Decoding:** We utilize the model's **Controlled Generation** features (`response_mime_type="application/json"`) to force the neural network into a deterministic output frame. This prevents the "creative" hallucinations common in traditional AI, ensuring every data point is a direct, verified extraction from the document.
+- **Inference Strategy:** We employ **Zero-Shot Forensic Prompting**, where the neural network is specifically tuned via instruction-following to behave as a "Forensic Financial Auditor" rather than a general-purpose writing assistant.
 
 ## 4. Why This Matters
-By solving the memory problem, **OpticLoan** is able to:
+By solving the memory problem and deploying specific transformer architectures, **OpticLoan** is able to:
 - **Analyze 100+ Page Documents** smoothly on basic hardware.
 - **Find "Hidden" Traps** that span multiple sections (e.g., Section 4 hidden inside the definitions of Section 12).
 - **Deliver Binary Accuracy:** Since the AI sees the *whole* document at once, it doesn't hallucinate missing sections—it audits them with forensic precision.

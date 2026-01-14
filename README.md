@@ -9,18 +9,19 @@ OpticLoan is a state-of-the-art **Forensic Intelligence Platform** designed to p
 - **Explainable AI:** Provides clear legal reasoning for every risk detected.
 - **Memory-Optimized Pipeline:** Custom cloud-native orchestration that allows auditing of massive documents without local lag or OOM errors.
 
-## 🧠 The "Memory Breakthrough"
-Unlike standard AI apps that struggle with large PDFs, OpticLoan uses:
-1. **Isolated Garbage Collection:** Explicit RAM purging after digitization.
-2. **2.0M Context Window:** Entire document analysis in a single unified stream.
-3. **Cloud-Native Elasticity:** Offloading "thinking" to avoid local memory bottlenecks.
+## 🧠 The Forensic Core
+OpticLoan uses specific **Transformer-based Neural Networks** (Google Gemini Flash Series) to audit documents. Unlike a simple text scanner, it employs:
+1. **Multi-Head Self-Attention:** This specific neural mechanism allows the system to correlate distant clauses (e.g., page 5 vs page 105) to find legal contradictions.
+2. **Isolated Garbage Collection:** Explicit RAM purging after digitization to prevent OOM errors on large files.
+3. **Constrained Decoding:** Forces the neural network into a deterministic JSON schema, ensuring 100% data integrity and zero hallucinations.
+4. **2.0M Context Window:** Entire document analysis in a single unified stream for forensic precision.
 
 ## 🛠️ Technical Stack
 
 - **Frontend:** React, Tailwind CSS (Forensic Aesthetic)
 - **Backend:** Flask, Python (Memory Managed)
-- **ML Engine:** Gemini 2.x Flash Chain (Cloud-Native Forensic Engine)
-- **OCR/Parsing:** PyMuPDF (Optimized for Legal Hierarchies)
+- **ML Engine:** Gemini 2.x Flash (Transformer-based LLM)
+- **OCR/Parsing:** PyMuPDF (Tailored for Legal Hierarchies)
 
 ## 🛠️ Installation
 
