@@ -19,15 +19,15 @@ const Dashboard = () => {
 
     if (!analysisData) {
         return (
-            <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-6">
-                <div className="max-w-md w-full bg-white p-12 rounded-3xl shadow-sm border border-slate-200 text-center">
-                    <h2 className="text-xl font-bold text-slate-900 mb-2 tracking-tight">Report Unavailable</h2>
-                    <p className="text-slate-500 mb-8 text-sm font-medium">Upload a document to begin your forensic audit.</p>
+            <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-6 text-slate-900 font-sans">
+                <div className="max-w-md w-full bg-white p-16 rounded-[40px] shadow-sm border border-slate-100 text-center">
+                    <h2 className="text-2xl font-black mb-2 tracking-tighter uppercase">NO REPORT</h2>
+                    <p className="text-slate-400 mb-10 text-[10px] font-bold uppercase tracking-[0.2em]">Upload a file to begin the forensic audit.</p>
                     <button
                         onClick={() => navigate('/')}
-                        className="w-full py-4 bg-[#003366] text-white font-semibold rounded-xl hover:bg-[#002244] transition-all"
+                        className="w-full py-4 bg-[#003366] text-white font-black rounded-2xl shadow-lg hover:bg-[#002244] transition-all uppercase text-[10px] tracking-[0.3em]"
                     >
-                        GO TO UPLOAD
+                        START AUDIT
                     </button>
                 </div>
             </div>
@@ -39,15 +39,15 @@ const Dashboard = () => {
 
     if (error) {
         return (
-            <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-6">
-                <div className="max-w-2xl w-full bg-white p-12 rounded-[2.5rem] shadow-xl border-t-8 border-red-500 text-center">
-                    <h2 className="text-2xl font-bold text-slate-900 mb-4 tracking-tight">ANALYSIS INTERRUPTED</h2>
+            <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-6 font-sans">
+                <div className="max-w-2xl w-full bg-white p-12 rounded-[3rem] shadow-xl border-t-8 border-red-500 text-center">
+                    <h2 className="text-2xl font-black text-slate-900 mb-4 tracking-tighter uppercase font-sans">ANALYSIS FAILED</h2>
                     <div className="bg-slate-50 p-6 rounded-2xl mb-10 text-left border border-slate-200">
                         <p className="text-slate-700 font-mono text-xs leading-relaxed overflow-auto max-h-40">{error}</p>
                     </div>
                     <button
                         onClick={() => navigate('/')}
-                        className="px-8 py-3 bg-red-600 text-white font-semibold rounded-xl hover:bg-red-700 transition-all text-sm"
+                        className="px-8 py-3 bg-red-600 text-white font-black rounded-xl hover:bg-red-700 transition-all text-[10px] tracking-widest uppercase"
                     >
                         TRY ANOTHER FILE
                     </button>
@@ -59,143 +59,129 @@ const Dashboard = () => {
     const auditScore = document_metadata?.trust_score || 0;
 
     return (
-        <div className="min-h-screen bg-[#F8FAFC] pb-20 font-sans text-slate-900">
-            {/* Elegant Minimal Header */}
-            <div className="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50">
-                <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-[#003366] rounded-lg flex items-center justify-center text-white font-bold text-[10px]">OL</div>
-                        <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Document Analysis Result</span>
+        <div className="min-h-screen bg-[#F8FAFC] pb-24 font-sans text-slate-900 select-none">
+            {/* Header: Pure Minimalist */}
+            <div className="max-w-7xl mx-auto px-10 pt-16 mb-20 flex items-end justify-between">
+                <div>
+                    <div className="flex items-center gap-3 mb-3">
+                        <span className="text-[10px] font-black text-[#003366] uppercase tracking-[0.4em]">OpticLoan Intelligence</span>
+                        <div className="w-1 h-1 bg-slate-200 rounded-full"></div>
+                        <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest truncate max-w-[200px]">{filename}</span>
                     </div>
-                    <button
-                        onClick={() => navigate('/')}
-                        className="text-[10px] font-bold text-slate-500 hover:text-[#003366] transition-colors uppercase tracking-widest"
-                    >
-                        New Audit
-                    </button>
+                    <h1 className="text-6xl font-black text-[#003366] tracking-tighter uppercase leading-none">FORENSIC REPORT</h1>
                 </div>
+                <button
+                    onClick={() => navigate('/')}
+                    className="text-[10px] font-black text-slate-300 hover:text-[#003366] transition-colors uppercase tracking-[0.4em] pb-1 border-b-2 border-transparent hover:border-[#003366]"
+                >
+                    NEW SCAN
+                </button>
             </div>
 
-            <div className="max-w-7xl mx-auto px-6 pt-12">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+            <div className="max-w-7xl mx-auto px-10">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-24 items-start">
 
-                    {/* LEFT SIDEBAR (Col 5): Summary and Metadata */}
-                    <div className="lg:col-span-5 space-y-8 lg:sticky lg:top-28">
-                        {/* Executive Summary Card */}
-                        <div className="bg-white rounded-[2rem] p-8 border border-slate-200 shadow-sm relative overflow-hidden">
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-full -mr-16 -mt-16 opacity-50"></div>
+                    {/* LEFT SIDE: SUMMARY & KEY FACTS (No cards, just typography) */}
+                    <div className="lg:col-span-5 space-y-20 lg:sticky lg:top-12">
+                        {/* Summary section */}
+                        <section>
+                            <h3 className="text-[10px] font-black text-slate-300 uppercase tracking-[0.6em] mb-10">Executive Summary</h3>
+                            <div className="space-y-10">
+                                <p className="text-[26px] font-black text-slate-900 leading-[1.15] tracking-tight">
+                                    {document_metadata?.summary || "Deep forensic audit complete. Several critical risk factors identified for review."}
+                                </p>
 
-                            <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-6 border-b border-slate-50 pb-2 relative z-10">Forensic Executive Summary</h3>
-
-                            <p className="text-xl font-semibold text-slate-900 leading-snug mb-8 relative z-10">
-                                {document_metadata?.summary || "Audit complete. Several risk factors identified for borrower consideration."}
-                            </p>
-
-                            <div className="grid grid-cols-2 gap-4 mb-8">
-                                <div className="bg-slate-50 p-4 rounded-2xl">
-                                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Verdict</p>
-                                    <p className={`text-xs font-bold uppercase tracking-widest ${auditScore > 70 ? 'text-emerald-600' : 'text-red-600'}`}>
-                                        {document_metadata?.verdict}
-                                    </p>
-                                </div>
-                                <div className="bg-[#003366] p-4 rounded-2xl text-center">
-                                    <p className="text-[9px] font-bold text-white/50 uppercase tracking-widest mb-1">Health Score</p>
-                                    <p className="text-xl font-bold text-white leading-none">{auditScore}<span className="text-[10px] text-white/30">/100</span></p>
-                                </div>
-                            </div>
-
-                            <div className="mb-0">
-                                <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                                    <div
-                                        className={`h-full transition-all duration-1000 ${auditScore > 70 ? 'bg-emerald-500' : auditScore > 40 ? 'bg-amber-500' : 'bg-red-500'}`}
-                                        style={{ width: `${auditScore}%` }}
-                                    ></div>
-                                </div>
-                                <div className="flex justify-between mt-2">
-                                    <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">At Risk</span>
-                                    <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">Optimized</span>
+                                <div className="flex items-center gap-10 pt-4">
+                                    <div>
+                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Audit Score</p>
+                                        <p className={`text-5xl font-black tracking-tighter ${auditScore > 70 ? 'text-emerald-500' : 'text-red-500'}`}>
+                                            {auditScore}<span className="text-base text-slate-200 ml-1">/100</span>
+                                        </p>
+                                    </div>
+                                    <div className="h-16 w-px bg-slate-100"></div>
+                                    <div>
+                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Audit Verdict</p>
+                                        <p className={`text-base font-black uppercase tracking-widest ${auditScore > 70 ? 'text-emerald-500' : 'text-red-500'}`}>
+                                            {document_metadata?.verdict}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </section>
 
-                        {/* Extracted Key Terms Card */}
-                        <div className="bg-white rounded-[2rem] p-8 border border-slate-200 shadow-sm">
-                            <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-8 border-b border-slate-50 pb-2">Extracted Key Terms</h3>
-                            <div className="space-y-8">
+                        {/* Facts section */}
+                        <section>
+                            <h3 className="text-[10px] font-black text-slate-300 uppercase tracking-[0.6em] mb-12">Key Deal Terms</h3>
+                            <div className="grid gap-12">
                                 {Object.entries(facts || {}).map(([label, value], i) => (
-                                    <div key={i} className="group flex flex-col gap-1">
-                                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest group-hover:text-[#003366] transition-colors">{label}</p>
-                                        <p className="text-[14px] font-semibold text-slate-800 leading-relaxed">{value}</p>
-                                        {i < Object.keys(facts).length - 1 && <div className="w-8 h-px bg-slate-50 mt-4"></div>}
+                                    <div key={i} className="group">
+                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-3 group-hover:text-[#003366] transition-colors">{label}</p>
+                                        <p className="text-xl font-black text-slate-900 leading-none tracking-tight uppercase">{value}</p>
                                     </div>
                                 ))}
                                 {(!facts || Object.keys(facts).length === 0) && (
-                                    <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">No primary terms detected</p>
+                                    <p className="text-slate-200 text-xs font-bold uppercase tracking-widest">No terms detected</p>
                                 )}
                             </div>
-                        </div>
+                        </section>
 
-                        <div className="px-4">
-                            <p className="text-[9px] font-bold text-slate-300 uppercase tracking-widest mb-1">Document Hash</p>
-                            <p className="text-[9px] font-medium text-slate-400 break-all leading-relaxed uppercase tracking-widest">{filename}</p>
+                        <div className="opacity-40">
+                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Forensic ID</p>
+                            <p className="text-[9px] font-bold text-slate-400 break-all leading-relaxed uppercase tracking-widest">{filename}</p>
                         </div>
                     </div>
 
-                    {/* RIGHT MAIN (Col 7): Potential Traps Feed */}
-                    <div className="lg:col-span-7 space-y-6">
-                        <div className="flex items-center justify-between px-2 mb-2">
-                            <h2 className="text-sm font-bold text-slate-900 uppercase tracking-[0.3em] flex items-center gap-3">
-                                <span className="w-2.5 h-2.5 rounded-full bg-red-500"></span>
-                                Potential Trap Analysis ({red_flags?.length || 0})
+                    {/* RIGHT SIDE: TRAPS (Clean Cards) */}
+                    <div className="lg:col-span-7 space-y-12">
+                        <div className="flex items-center justify-between px-2">
+                            <h2 className="text-[10px] font-black text-[#003366] uppercase tracking-[0.6em] flex items-center gap-3">
+                                <span className="w-2 h-2 rounded-full bg-red-400"></span>
+                                RISK ANALYSIS FEED
                             </h2>
+                            <span className="text-[10px] font-black text-slate-200 uppercase tracking-widest leading-none">Total {red_flags?.length || 0} findings</span>
                         </div>
 
                         {red_flags && red_flags.length > 0 ? (
                             red_flags.map((flag, idx) => (
-                                <div key={idx} className="bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-sm hover:shadow-md transition-all relative overflow-hidden group">
-                                    <div className="flex justify-between items-start mb-6">
-                                        <div className="flex items-center gap-3">
-                                            <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold text-xs ${flag.severity === 'High' ? 'bg-red-50 text-red-600' : 'bg-amber-50 text-amber-600'}`}>
-                                                {flag.severity === 'High' ? '!' : '?'}
-                                            </div>
-                                            <h4 className="text-[17px] font-bold text-slate-900 tracking-tight group-hover:text-[#003366] transition-colors">{flag.category}</h4>
+                                <div key={idx} className="bg-white p-12 rounded-[40px] border border-slate-100 transition-all hover:border-[#003366]/20 group">
+                                    <div className="flex justify-between items-start mb-10">
+                                        <div className="flex items-center gap-4">
+                                            <div className={`w-2.5 h-2.5 rounded-full ${flag.severity === 'High' ? 'bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.4)]' : 'bg-amber-400'}`}></div>
+                                            <h4 className="text-2xl font-black text-slate-900 tracking-tighter uppercase leading-none group-hover:text-[#003366] transition-colors">{flag.category}</h4>
                                         </div>
-                                        <span className={`text-[9px] font-black uppercase tracking-widest ${flag.severity === 'High' ? 'text-red-500' : 'text-amber-500'}`}>
+                                        <span className={`text-[10px] font-black uppercase tracking-[0.25em] ${flag.severity === 'High' ? 'text-red-500' : 'text-amber-500'}`}>
                                             {flag.severity} RISK
                                         </span>
                                     </div>
 
-                                    <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-100 mb-6 font-medium italic text-slate-500 text-[13px] leading-relaxed border-l-4 border-slate-200">
-                                        "{flag.text_found || "Referenced term extracted from analysis data."}"
+                                    <div className="mb-10 border-l-2 border-slate-100 pl-8">
+                                        <p className="text-base font-bold italic text-slate-400 leading-relaxed">
+                                            "{flag.text_found || "Reference quote extracted from analysis."}"
+                                        </p>
                                     </div>
 
-                                    <div className="flex gap-4 items-start pt-2">
-                                        <div className="w-5 h-5 rounded-full bg-[#003366]/5 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                            <div className="w-1 h-1 rounded-full bg-[#003366]"></div>
+                                    <div className="flex gap-5 items-start">
+                                        <div className="w-6 h-6 rounded-full bg-slate-50 flex items-center justify-center flex-shrink-0 mt-1">
+                                            <div className="w-1 h-1 rounded-full bg-slate-200"></div>
                                         </div>
-                                        <p className="text-[14px] text-slate-600 font-medium leading-relaxed">
+                                        <p className="text-[15px] font-bold text-slate-500 leading-relaxed">
                                             {flag.reasoning}
                                         </p>
                                     </div>
                                 </div>
                             ))
                         ) : (
-                            <div className="bg-white p-24 rounded-[3.5rem] border border-dashed border-slate-200 text-center">
-                                <span className="text-3xl mb-4 block">✅</span>
-                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">No high-risk clauses identified in current scan.</p>
+                            <div className="py-40 rounded-[4rem] border-2 border-dashed border-slate-100 text-center">
+                                <p className="text-[10px] font-black text-slate-200 uppercase tracking-[0.6em]">No Predatory Clauses Identified</p>
                             </div>
                         )}
                     </div>
                 </div>
 
-                {/* Professional Footer */}
-                <div className="mt-24 pt-12 border-t border-slate-100 flex flex-col items-center gap-4">
-                    <p className="text-[9px] font-bold text-slate-300 uppercase tracking-[0.6em]">OpticLoan Intelligence • Forensic v2.5</p>
-                    <div className="flex gap-3">
-                        <div className="w-1 h-1 rounded-full bg-slate-200"></div>
-                        <div className="w-1 h-1 rounded-full bg-[#003366]"></div>
-                        <div className="w-1 h-1 rounded-full bg-slate-200"></div>
-                    </div>
+                {/* Secure Footer */}
+                <div className="mt-48 flex flex-col items-center gap-10 opacity-30">
+                    <div className="h-px w-24 bg-slate-900"></div>
+                    <p className="text-[10px] font-black text-slate-900 uppercase tracking-[0.8em]">OpticLoan Intelligence • v2.6SECURE</p>
                 </div>
             </div>
         </div>
