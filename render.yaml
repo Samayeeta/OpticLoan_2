@@ -29,5 +29,4 @@ services:
         fromService:
           type: web
           name: opticloan-backend
-          property: envVar
           envVarKey: API_KEY
