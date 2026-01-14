@@ -33,7 +33,25 @@ const Dashboard = () => {
     }
 
     const { analysis, filename } = analysisData;
-    const { facts, red_flags, document_metadata, explainability } = analysis;
+    const { facts, red_flags, document_metadata, explainability, error } = analysis;
+
+    if (error) {
+        return (
+            <div className="max-w-7xl mx-auto px-6 py-20 text-center">
+                <div className="bg-red-50 border-2 border-red-200 p-10 rounded-3xl inline-block max-w-2xl">
+                    <span className="text-6xl mb-6 block">🚫</span>
+                    <h2 className="text-2xl font-black text-red-800 mb-4 uppercase tracking-tight">Analysis Failed</h2>
+                    <p className="text-red-600 font-bold mb-8 leading-relaxed">{error}</p>
+                    <button
+                        onClick={() => navigate('/')}
+                        className="px-8 py-3 bg-red-600 text-white font-black rounded-xl shadow-lg hover:bg-red-700 transition-all uppercase tracking-widest"
+                    >
+                        TRY ANOTHER FILE
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     const getVerdictColor = (verdict) => {
         switch (verdict?.toLowerCase()) {
