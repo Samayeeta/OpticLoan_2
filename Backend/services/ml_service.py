@@ -117,7 +117,8 @@ def analyze_document_cloud_forensic(pdf_path):
         }}
         """
 
-        # 4. Generate Content
+        # 4. Generate Content (Using the most stable model ID)
+        print(f"Requesting deep audit from Gemini...")
         response = client.models.generate_content(
             model='gemini-1.5-flash',
             contents=[
@@ -126,9 +127,12 @@ def analyze_document_cloud_forensic(pdf_path):
             ]
         )
 
-        # Cleanup
-        try: client.files.delete(name=file_handle.name)
-        except: pass
+        # Cleanup Cloud File
+        try: 
+            client.files.delete(name=file_handle.name)
+            print("Cloud file cleaned up.")
+        except: 
+            pass
 
         # Parse JSON
         clean_text = response.text.strip()
@@ -137,7 +141,12 @@ def analyze_document_cloud_forensic(pdf_path):
         elif "```" in clean_text:
              clean_text = clean_text.split("```")[1].split("```")[0].strip()
         
-        return json.loads(clean_text)
+        parsed_result = json.loads(clean_text)
+        # Ensure we always return at least some facts/flags even if empty keys
+        if "facts" not in parsed_result: parsed_result["facts"] = {}
+        if "red_flags" not in parsed_result: parsed_result["red_flags"] = []
+        
+        return parsed_result
 
     except Exception as e:
         print(f"Forensic Audit Error: {str(e)}")

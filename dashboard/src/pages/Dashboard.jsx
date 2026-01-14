@@ -19,15 +19,17 @@ const Dashboard = () => {
 
     if (!analysisData) {
         return (
-            <div className="max-w-7xl mx-auto px-6 py-20 text-center">
-                <h2 className="text-2xl font-bold text-[#003366] mb-4 uppercase">No Analysis Data Available</h2>
-                <p className="text-slate-500 mb-8">Please upload a document first to see the analysis results.</p>
-                <button
-                    onClick={() => navigate('/')}
-                    className="px-8 py-3 bg-[#003366] text-white font-bold rounded-xl shadow-lg hover:bg-[#002244] transition-all"
-                >
-                    GO TO UPLOAD
-                </button>
+            <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
+                <div className="max-w-md w-full bg-white p-10 rounded-3xl shadow-2xl border-4 border-[#003366] text-center">
+                    <h2 className="text-2xl font-black text-[#003366] mb-4 uppercase tracking-tighter">NO DATA FOUND</h2>
+                    <p className="text-slate-500 mb-8 font-medium">Upload a document to begin the forensic audit.</p>
+                    <button
+                        onClick={() => navigate('/')}
+                        className="w-full py-4 bg-[#003366] text-white font-black rounded-xl shadow-lg hover:scale-[1.02] active:scale-95 transition-all uppercase tracking-widest"
+                    >
+                        GO TO UPLOAD
+                    </button>
+                </div>
             </div>
         );
     }
@@ -37,158 +39,133 @@ const Dashboard = () => {
 
     if (error) {
         return (
-            <div className="max-w-7xl mx-auto px-6 py-20 text-center">
-                <div className="bg-red-50 border-2 border-red-200 p-10 rounded-3xl inline-block max-w-2xl">
-                    <span className="text-6xl mb-6 block">🚫</span>
-                    <h2 className="text-2xl font-black text-red-800 mb-4 uppercase tracking-tight">Analysis Failed</h2>
-                    <p className="text-red-600 font-bold mb-8 leading-relaxed">{error}</p>
+            <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
+                <div className="max-w-2xl w-full bg-white p-12 rounded-[40px] shadow-2xl border-4 border-red-600 text-center">
+                    <span className="text-7xl mb-6 block">⚠️</span>
+                    <h2 className="text-3xl font-black text-red-600 mb-4 uppercase tracking-tighter">ANALYSIS FAILED</h2>
+                    <div className="bg-red-50 p-6 rounded-2xl mb-8 border border-red-100">
+                        <p className="text-red-800 font-mono text-xs break-all leading-relaxed whitespace-pre-wrap">{error}</p>
+                    </div>
                     <button
                         onClick={() => navigate('/')}
-                        className="px-8 py-3 bg-red-600 text-white font-black rounded-xl shadow-lg hover:bg-red-700 transition-all uppercase tracking-widest"
+                        className="px-10 py-4 bg-red-600 text-white font-black rounded-2xl shadow-xl hover:bg-red-700 transition-all uppercase tracking-widest"
                     >
-                        TRY ANOTHER FILE
+                        TRY DIFFERENT FILE
                     </button>
                 </div>
             </div>
         );
     }
 
-    const getVerdictColor = (verdict) => {
-        switch (verdict?.toLowerCase()) {
-            case 'safe': return 'bg-emerald-500 border-emerald-500 text-emerald-700';
-            case 'caution': return 'bg-amber-500 border-amber-500 text-amber-600';
-            case 'critical': return 'bg-red-500 border-red-500 text-red-600';
-            default: return 'bg-slate-500 border-slate-500 text-slate-500';
-        }
-    };
+    const auditScore = document_metadata?.trust_score || 0;
 
     return (
-        <div className="max-w-7xl mx-auto px-6 py-10">
-            {/* Header Section */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
-                <div>
-                    <div className="flex items-center gap-2 mb-2">
-                        <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-black rounded uppercase">Audit Complete</span>
-                        <span className="text-slate-400 text-xs font-bold">Ref: {filename?.substring(0, 8) || 'DOC-LOCAL-AI'}</span>
+        <div className="min-h-screen bg-[#F8FAFC] py-12 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-5xl mx-auto">
+                {/* Top Nav/Header */}
+                <div className="flex justify-between items-center mb-12">
+                    <div>
+                        <div className="flex items-center gap-3 mb-1">
+                            <span className="bg-emerald-500 text-white px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest">Live Audit</span>
+                            <span className="text-slate-400 text-[10px] font-bold tracking-widest uppercase">ID: {filename?.substring(0, 8)}</span>
+                        </div>
+                        <h1 className="text-4xl font-black text-[#003366] tracking-tighter uppercase leading-none">FORENSIC REPORT</h1>
+                        <p className="text-slate-400 font-bold mt-1 text-sm">{filename}</p>
                     </div>
-                    <h1 className="text-3xl font-black text-[#003366] tracking-tight uppercase">Loan Analysis Report</h1>
-                    <p className="text-slate-500 font-medium italic">{filename || 'Document'}</p>
-                </div>
-                <div className="flex gap-3">
                     <button
                         onClick={() => navigate('/')}
-                        className="px-5 py-2.5 bg-[#003366] text-white font-bold rounded shadow-md hover:bg-[#002244] transition-all"
+                        className="px-6 py-3 bg-[#003366] text-white font-black rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all uppercase text-xs tracking-widest"
                     >
                         NEW ANALYSIS
                     </button>
                 </div>
-            </div>
 
-            {/* Summary Score Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-                <div className="bg-white border-b-4 border-emerald-500 p-6 rounded shadow-sm">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">FACTS EXTRACTED</p>
-                    <p className="text-3xl font-black text-[#003366]">{Object.keys(facts || {}).length}</p>
-                    <p className="text-xs text-slate-500 mt-2">Core financial terms identified by Gemini AI</p>
-                </div>
-                <div className={`bg-white border-b-4 p-6 rounded shadow-sm ${getVerdictColor(document_metadata?.verdict).split(' ')[2]}`}>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">RED FLAGS</p>
-                    <p className="text-3xl font-black">{red_flags?.length || 0}</p>
-                    <p className="text-xs text-slate-500 mt-2 font-medium">Potential risks detected in the agreement</p>
-                </div>
-                <div className="bg-white border-b-4 border-[#003366] p-6 rounded shadow-sm">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">VERDICT & TRUST</p>
-                    <div className="flex items-center gap-3">
-                        <p className={`text-3xl font-black ${getVerdictColor(document_metadata?.verdict).split(' ')[2]}`}>{document_metadata?.verdict?.toUpperCase() || 'UNKNOWN'}</p>
-                        <div className="h-6 w-1 bg-slate-200"></div>
-                        <p className="text-xs font-bold text-slate-500">Confidence: {Math.round((explainability?.confidence || 0) * 100)}%</p>
-                    </div>
-                </div>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Left Column: Facts Section */}
-                <section className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                    <div className="bg-slate-50 px-6 py-4 border-b border-slate-200">
-                        <h3 className="font-black text-[#003366] text-sm uppercase tracking-wider flex items-center gap-2">
-                            <span className="text-xl">📋</span> EXTRACTED TERMS
-                        </h3>
-                    </div>
-                    <div className="p-0">
-                        <table className="w-full text-left">
-                            <tbody className="divide-y divide-slate-100">
-                                {Object.entries(facts || {}).map(([label, value], i) => (
-                                    <tr key={i} className="hover:bg-slate-50/50 transition-colors group">
-                                        <td className="px-6 py-4">
-                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{label}</p>
-                                            <p className="text-md font-bold text-slate-800">{value}</p>
-                                        </td>
-                                        <td className="px-6 py-4 text-right">
-                                            <span className="px-2 py-1 bg-slate-100 text-slate-400 text-[10px] font-bold rounded group-hover:bg-[#003366]/10 group-hover:text-[#003366] transition-colors">
-                                                SELECTIVE AI ANALYSIS
-                                            </span>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                        {Object.keys(facts || {}).length === 0 && (
-                            <div className="p-10 text-center text-slate-400 font-bold uppercase text-xs tracking-widest">
-                                No specific facts detected
+                {/* Main Content: The Card Set */}
+                <div className="space-y-8">
+                    {/* TRAPS SECTION */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {red_flags && red_flags.length > 0 ? (
+                            red_flags.map((flag, idx) => (
+                                <div key={idx} className="bg-white p-10 rounded-[40px] shadow-xl border-4 border-[#003366] relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300">
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-amber-50 rounded-full -mr-12 -mt-12 group-hover:bg-amber-100 transition-colors"></div>
+                                    <div className="relative z-10">
+                                        <p className="text-amber-500 font-black text-xs uppercase tracking-[0.2em] mb-4">TRAP DETECTED</p>
+                                        <h3 className="text-2xl font-black text-[#003366] mb-3 leading-tight uppercase tracking-tight">
+                                            {flag.category}
+                                        </h3>
+                                        <div className="mb-6">
+                                            <p className="text-slate-400 text-sm font-medium italic leading-relaxed border-l-4 border-slate-100 pl-4 py-1">
+                                                "{flag.text_found?.length > 150 ? flag.text_found.substring(0, 150) + '...' : flag.text_found}"
+                                            </p>
+                                        </div>
+                                        <div className="pt-6 border-t border-slate-50">
+                                            <p className="text-slate-600 text-sm font-bold leading-relaxed lowercase first-letter:uppercase">
+                                                {flag.reasoning}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="md:col-span-2 bg-white p-12 rounded-[40px] shadow-xl border-4 border-[#003366] text-center">
+                                <span className="text-5xl mb-4 block">✅</span>
+                                <h3 className="text-2xl font-black text-[#003366] uppercase">No Critical Traps Found</h3>
+                                <p className="text-slate-500 font-medium mt-2">The AI didn't find any common predatory markers in this document.</p>
                             </div>
                         )}
                     </div>
-                </section>
 
-                {/* Right Column: Red Flags Section */}
-                <div className="space-y-6">
-                    {red_flags && red_flags.length > 0 ? (
-                        red_flags.map((flag, idx) => (
-                            <section key={idx} className={`bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden border-l-8 ${flag.severity === 'High' ? 'border-l-red-500' : 'border-l-amber-500'}`}>
-                                <div className={`${flag.severity === 'High' ? 'bg-red-50' : 'bg-amber-50'} px-6 py-4 border-b border-slate-100 flex justify-between items-center`}>
-                                    <h3 className={`font-black ${flag.severity === 'High' ? 'text-red-700' : 'text-amber-700'} text-sm uppercase tracking-wider flex items-center gap-2`}>
-                                        <span className="text-xl">{flag.severity === 'High' ? '🚫' : '⚠️'}</span> {flag.category}: POTENTIAL RISK
-                                    </h3>
-                                    <span className={`px-2 py-1 ${flag.severity === 'High' ? 'bg-red-200 text-red-800' : 'bg-amber-200 text-amber-800'} text-[10px] font-black rounded uppercase`}>{flag.severity} Risk</span>
-                                </div>
-                                <div className="p-6">
-                                    <div className="mb-4 bg-slate-900 text-slate-300 p-4 rounded font-mono text-xs leading-relaxed border-l-2 border-[#003366]">
-                                        "{flag.text_found}"
+                    {/* FACTS & SCORE SECTION */}
+                    <div className="bg-white p-10 rounded-[40px] shadow-2xl border-4 border-[#003366]">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                            {/* Facts List */}
+                            <div className="space-y-8">
+                                {Object.entries(facts || {}).map(([label, value], i) => (
+                                    <div key={i} className="group">
+                                        <p className="text-emerald-500 font-black text-[10px] uppercase tracking-[0.2em] mb-1">EXTRACTED FACT</p>
+                                        <h4 className="text-xl font-black text-[#003366] leading-none uppercase tracking-tight">{label}: {value}</h4>
+                                        <p className="text-slate-400 text-[10px] font-bold mt-1 uppercase tracking-widest">Verified by Selective AI Search</p>
+                                        {i < Object.keys(facts).length - 1 && <div className="h-px bg-slate-100 mt-6 w-full"></div>}
                                     </div>
-                                    <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">REASONING & IMPLICATION</h4>
-                                    <p className="text-sm text-slate-600 font-medium leading-relaxed mb-4">
-                                        {flag.reasoning}
+                                ))}
+                                {Object.keys(facts || {}).length === 0 && (
+                                    <p className="text-slate-400 font-bold uppercase text-xs italic">No specific facts mapped from discovery.</p>
+                                )}
+                            </div>
+
+                            {/* Score Sidebar */}
+                            <div className="lg:border-l-4 border-slate-100 lg:pl-12 pt-12 lg:pt-0">
+                                <div className="mb-8">
+                                    <h3 className="text-3xl font-black text-[#003366] mb-2 uppercase tracking-tighter leading-none">AUDIT ANALYSIS</h3>
+                                    <p className="text-slate-500 font-medium text-sm leading-relaxed">
+                                        {document_metadata?.summary || "Comprehensive forensic audit complete. Detailed risk markers extracted for borrower review."}
                                     </p>
                                 </div>
-                            </section>
-                        ))
-                    ) : (
-                        <div className="p-12 bg-emerald-50 border border-emerald-100 rounded-2xl text-center">
-                            <span className="text-4xl mb-4 block">✅</span>
-                            <h3 className="text-lg font-black text-emerald-800 uppercase tracking-tight">No Critical Risks Detected</h3>
-                            <p className="text-emerald-600 text-sm font-medium mt-2">Our local AI scan didn't find any common predatory clauses in this document sample.</p>
+                                <div className="space-y-4">
+                                    <div className="flex justify-between items-end mb-2">
+                                        <p className="text-[#003366] font-black uppercase text-xs tracking-widest">AUDIT SCORE: {auditScore}/100</p>
+                                    </div>
+                                    <div className="h-4 w-full bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+                                        <div
+                                            className={`h-full transition-all duration-1000 ease-out ${auditScore > 70 ? 'bg-emerald-500' : auditScore > 40 ? 'bg-amber-500' : 'bg-red-500'}`}
+                                            style={{ width: `${auditScore}%` }}
+                                        ></div>
+                                    </div>
+                                    <div className="flex justify-between mt-2">
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">High Risk</p>
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Safe</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    )}
+                    </div>
+                </div>
+
+                {/* Professional Footer */}
+                <div className="mt-12 text-center">
+                    <p className="text-slate-400 text-[10px] font-bold uppercase tracking-[0.3em]">OPTICLOAN INTELLIGENCE • FORENSIC v2.0</p>
                 </div>
             </div>
-
-            {/* Recommendation Banner */}
-            {red_flags && red_flags.length > 0 && (
-                <div className="mt-12 p-8 rounded-2xl bg-[#003366] text-white shadow-xl relative overflow-hidden">
-                    <div className="absolute top-0 right-0 p-10 opacity-10">
-                        <span className="text-[12rem] font-black leading-none">⚖️</span>
-                    </div>
-                    <div className="relative z-10 max-w-2xl px-4 md:px-0">
-                        <h2 className="text-xl md:text-2xl font-black mb-4 uppercase tracking-tight">AI Executive Summary</h2>
-                        <p className="text-blue-100 font-medium leading-relaxed mb-6 text-sm md:text-base">
-                            {document_metadata?.summary || `Based on the ${red_flags.length} risks identified by our selective Gemini analysis, we recommend reviewing ${red_flags.map(f => f.category).join(', ')} clauses. Ensure that these terms align with standard market practices before signing.`}
-                        </p>
-                        <button className="w-full md:w-auto px-6 py-3 bg-amber-500 text-[#003366] font-black rounded shadow-lg hover:bg-amber-400 hover:-translate-y-0.5 transition-all text-sm uppercase tracking-widest">
-                            GENERATE COUNTER-OFFER DOC
-                        </button>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };
