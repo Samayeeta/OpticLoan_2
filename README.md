@@ -2,6 +2,9 @@
 
 OpticLoan is a state-of-the-art **Forensic Intelligence Platform** designed to protect borrowers by deconstructing complex loan agreements. It utilizes advanced Neural Networks and optimized memory orchestration to identify predatory "trap clauses" hidden in large legal documents.
 
+## 🚀 Live Demo
+**[Try it out here: opticloan-2-1.onrender.com](https://opticloan-2-1.onrender.com)**
+
 ## 🚀 Key Features
 
 - **Forensic Fact Extraction:** Distills 50+ page documents into core financial markers (APR, Penalties, Dates).
@@ -9,12 +12,11 @@ OpticLoan is a state-of-the-art **Forensic Intelligence Platform** designed to p
 - **Explainable AI:** Provides clear legal reasoning for every risk detected.
 - **Memory-Optimized Pipeline:** Custom cloud-native orchestration that allows auditing of massive documents without local lag or OOM errors.
 
-## 🧠 The Forensic Core
-OpticLoan uses specific **Transformer-based Neural Networks** (Google Gemini Flash Series) to audit documents. Unlike a simple text scanner, it employs:
-1. **Multi-Head Self-Attention:** This specific neural mechanism allows the system to correlate distant clauses (e.g., page 5 vs page 105) to find legal contradictions.
-2. **Isolated Garbage Collection:** Explicit RAM purging after digitization to prevent OOM errors on large files.
-3. **Constrained Decoding:** Forces the neural network into a deterministic JSON schema, ensuring 100% data integrity and zero hallucinations.
-4. **2.0M Context Window:** Entire document analysis in a single unified stream for forensic precision.
+## 🧠 The Neural Architecture (The "How")
+OpticLoan is powered by a **Transformer-based Decoder-only Neural Network** (Google Gemini 2.x Flash). Specifically:
+1. **Multi-Head Self-Attention:** This neural mechanism enables the system to assign contextual weights across a **2.0M token span**, allowing it to model long-range legal dependencies (e.g., page 5 definitions affecting page 105 clauses).
+2. **Path-Based Positional Encoding:** Enables the network to understand the hierarchy of legal headings and subsections, treating the legal document as a structured graph rather than raw text.
+3. **Constrained JSON Decoding:** We use deterministic sampling with a forced MIME-type schema to ensure the neural network generates verifiable extraction data with zero hallucinations.
 
 ## 🛠️ Technical Stack
 

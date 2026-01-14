@@ -21,13 +21,13 @@ Instead of using heavy local models (like BERT which consume GBs of RAM), we off
 Traditional apps often crash when an AI returns malformed JSON. We built a **Response Sanitization Layer** that uses regex cleaning and defensive parsing to ensure the backend never hangs. Even if the AI returns text wrapped in markdown, our system extracts the "Core DNA" (JSON) and validates it before it ever hits the UI.
 
 ## 3. The Forensic Intelligence Pipeline: Advanced Neural Architecture
-Instead of using generic NLP, OpticLoan's intelligence is built on **Multi-Modal Transformer Decoders** (specifically the Google Gemini Flash family).
+Instead of using generic NLP, OpticLoan's intelligence is built on **Transformer-based Decoder-only Neural Networks** (specifically from the Google Gemini 2.x Flash family).
 
-### Technical Specifications:
-- **Neural Architecture:** Transformer-based Large Language Models (LLMs) with **Multi-Head Self-Attention**. This architecture allows the network to assign weights to different words across a 2-million token span, correlating a "Default Interest Rate" on page 10 with a "Grace Period" definition on page 90.
-- **Model Ensemble:** A robust fallback chain including **Gemini 2.5 Flash-Lite**, **2.0 Flash**, and **1.5 Flash**. This ensure consistent forensic depth by automatically scaling the audit intensity based on document complexity.
-- **Constrained Decoding:** We utilize the model's **Controlled Generation** features (`response_mime_type="application/json"`) to force the neural network into a deterministic output frame. This prevents the "creative" hallucinations common in traditional AI, ensuring every data point is a direct, verified extraction from the document.
-- **Inference Strategy:** We employ **Zero-Shot Forensic Prompting**, where the neural network is specifically tuned via instruction-following to behave as a "Forensic Financial Auditor" rather than a general-purpose writing assistant.
+### Technical Specifications (The "What" and "How"):
+- **Architecture:** A decoder-only transformer that models legal documents as a continuous auto-regressive stream. This allows the network to predict risk markers by conditioning on the entire preceding document history.
+- **Neural Mechanism (Multi-Head Self-Attention):** The "Forensic Core" uses multiple attention heads to compute the relevance of every word in the document to every other word. This allows the network to assign high attention scores to a "Default" clause on page 10 and correlate it with a "Cure Period" definition on page 105, even across **2.0M tokens**.
+- **Inference Strategy (Path-Based Parsing):** The neural network doesn't just see pixels; it processes the **Semantic Graph** of the loan agreement. It is specifically instruction-tuned to prioritize "Boolean Assertions" (True/False predatory states) over simple text generation.
+- **Constrained Decoding (Deterministic Frame):** We use a **High-Precision Sampling** strategy combined with a fixed JSON schema. This forces the transformer to activate only the "forensic auditing" weights of its pre-trained knowledge base, effectively silencing the "creative writing" circuits to ensure zero hallucinations.
 
 ## 4. Why This Matters
 By solving the memory problem and deploying specific transformer architectures, **OpticLoan** is able to:
