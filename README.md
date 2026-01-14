@@ -19,7 +19,7 @@ Unlike standard AI apps that struggle with large PDFs, OpticLoan uses:
 
 - **Frontend:** React, Tailwind CSS (Forensic Aesthetic)
 - **Backend:** Flask, Python (Memory Managed)
-- **ML Engine:** Gemini 1.5 Pro (Cloud-Native Forensic Engine)
+- **ML Engine:** Gemini 2.x Flash Chain (Cloud-Native Forensic Engine)
 - **OCR/Parsing:** PyMuPDF (Optimized for Legal Hierarchies)
 
 ## 🛠️ Installation

@@ -14,7 +14,7 @@ We solved these problems through a **Cloud-Native Memory Orchestration** strateg
 In our `ml_service.py`, we implemented explicit **Garbage Collection (GC)** protocols. After the extraction of text using `PyMuPDF`, the application triggers `gc.collect()`. This ensures that large document chunks are purged from the system RAM immediately after they are sent to the cloud engine, allowing the app to process thousands of pages without a memory leak.
 
 ### B. Cloud-Native Elasticity
-Instead of using heavy local models (like BERT which consume GBs of RAM), we offloaded the "Thinking" to our **Forensic Intelligence Engine** in the cloud (Gemini 1.5 Pro). This engine has a **2-Million Token Context Window**.
+Instead of using heavy local models (like BERT which consume GBs of RAM), we offloaded the "Thinking" to our **Forensic Intelligence Engine** in the cloud (Gemini 2.5/2.0 Flash Chain). These engines provide massive context windows and industrial-grade throughput.
 - **The Result:** We can feed an entire 200-page loan agreement into the engine as a single unit. The AI "remembers" everything from the cover page to the signature page simultaneously.
 
 ### C. Robust Binary Parsing
