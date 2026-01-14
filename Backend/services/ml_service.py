@@ -4,7 +4,6 @@ import json
 import time
 import fitz  # PyMuPDF
 from google import genai
-from google.genai import types
 from config import Config
 
 # Configure Gemini Client
@@ -17,165 +16,128 @@ if Config.GEMINI_API_KEY:
 else:
     print("WARNING: GEMINI_API_KEY not found in environment.")
 
-# --- ENHANCED HEURISTIC RISK MAPPINGS ---
-RISK_CATEGORIES = {
-    "Predatory Finance": ["fee", "charge", "penalty", "commission", "cost", "repayment", "prepayment", "yield maintenance", "balloon", "interest rate", "apr", "percentage"],
-    "Default & Asset Seizure": ["default", "acceleration", "seize", "possession", "collateral", "foreclosure", "security interest", "remedy", "breach", "termination", "forfeiture", "repossession", "lien"],
-    "Legal & Arbitration Traps": ["waive", "jury trial", "arbitration", "jurisdiction", "governing law", "venue", "class action", "immunity", "liability", "dispute", "litigation"],
-    "Extensive Obligations": ["confession of judgment", "cognovit", "guaranty", "indemnify", "power of attorney", "assignment"]
-}
-
-def extract_heuristic_signals(pdf_path):
+def extract_entire_document_text(pdf_path):
     """
-    Ultra-lightweight scan using PyMuPDF. 
-    Only extracts raw text for the local scanner to find hotspots.
-    Memory footprint remains extremely low (~10-20MB).
+    Extracts text from EVERY page of the PDF using PyMuPDF.
+    Extremely memory-efficient and fast.
     """
-    hotspots = []
+    full_text = []
     try:
         doc = fitz.open(pdf_path)
-        total_pages = len(doc)
-        print(f"Heuristic Scan of {total_pages} pages...")
-        
-        for i in range(total_pages):
+        print(f"Extracting text from all {len(doc)} pages...")
+        for i in range(len(doc)):
             page = doc.load_page(i)
-            text = page.get_text()
-            
-            detected = []
-            for category, keywords in RISK_CATEGORIES.items():
-                if any(re.search(r'\b' + re.escape(kw) + r'\b', text, re.IGNORECASE) for kw in keywords):
-                    detected.append(category)
-            
-            if detected or i < 3: # Always include first 3 pages as potential hotspots
-                hotspots.append({
-                    "page": i + 1,
-                    "signals": detected if detected else ["Core Terms"]
-                })
-        
+            page_text = page.get_text()
+            if page_text.strip():
+                full_text.append(f"--- PAGE {i+1} ---\n{page_text}")
+            else:
+                full_text.append(f"--- PAGE {i+1} ---\n[Image-based page: No selectable text found]")
         doc.close()
-        return hotspots
+        return "\n\n".join(full_text)
     except Exception as e:
-        print(f"Heuristic Scan Error: {e}")
-        return []
+        print(f"Text Extraction Error: {e}")
+        return ""
 
-def analyze_cloud_first(pdf_path, hotspots):
+def analyze_document_rigorous(text_content):
     """
-    Cloud-First Analysis:
-    1. Uploads PDF to Gemini File API.
-    2. Uses Gemini 1.5 Flash to perform the audit on Google's infrastructure.
+    Sends the entire document text to Gemini with a highly aggressive forensic prompt.
     """
     if not client:
         return {"error": "Gemini API client not initialized"}
 
+    if not text_content or len(text_content) < 100:
+        return {"error": "The document appears to have no selectable text. Please ensure it is not a pure image scan."}
+
+    prompt = f"""
+    ROLE: Senior Forensic Loan Auditor & Predatory Lending Specialist.
+    
+    TASK: 
+    I will provide the FULL TEXT of a loan agreement below. You MUST perform a rigorous, 
+    hostile audit from the perspective of the borrower. 
+    
+    MANDATORY REQUIREMENT: 
+    You MUST identify and detail at least 5-10 specific "Traps", "Red Flags", or "Unfair Clauses". 
+    If you find fewer than 5, you are not looking hard enough. 
+
+    AREAS TO ATTACK:
+    - Default Interest Hikes (e.g., 24%+ rates)
+    - Acceleration Clauses (Total balance due on one missed payment)
+    - "Confession of Judgment" (Giving up the right to defend in court)
+    - Hidden Fees (Processing, Origination, "Service" fees)
+    - Jury Trial Waivers & Mandatory Arbitration
+    - Personal Guarantees & Asset Seizures
+
+    FULL DOCUMENT TEXT:
+    {text_content}
+
+    AUDIT REQUIREMENTS:
+    1. CORE FACTS: Extract Interest Rate (APR), Loan Amount, Term, Late Penalties, Collateral, and Jurisdiction.
+    2. RED FLAGS (MIN 5): Provide Category, EXACT QUOTE, and a "Why this is a Trap" explanation.
+    3. SUMMARY: A 3-sentence summary of the biggest danger in this specific deal.
+    4. VERDICT: Trust Score (0-100) and Verdict (Safe/Caution/Critical).
+
+    OUTPUT FORMAT (STRICT JSON ONLY):
+    {{
+        "document_metadata": {{ 
+            "trust_score": number, 
+            "verdict": "Safe" | "Caution" | "Critical",
+            "summary": "string" 
+        }},
+        "facts": {{
+            "Interest Rate": "string",
+            "Loan Amount": "string",
+            "Loan Term": "string",
+            "Late Penalties": "string",
+            "Collateral": "string",
+            "Jurisdiction": "string"
+        }},
+        "red_flags": [
+            {{
+                "severity": "Low" | "Medium" | "High",
+                "category": "string",
+                "text_found": "EXACT QUOTE",
+                "reasoning": "Detailed explanation"
+            }}
+        ],
+        "explainability": {{ "confidence": number }}
+    }}
+    """
+
     try:
-        # 1. Upload the file to Google File API
-        print(f"Uploading {os.path.basename(pdf_path)} to Google Cloud...")
-        file_handle = client.files.upload(path=pdf_path)
-        
-        # Wait for file to be ready (usually instant for small/medium PDFs)
-        while file_handle.state == "PROCESSING":
-            time.sleep(1)
-            file_handle = client.files.get(name=file_handle.name)
-
-        # 2. Prepare the prompt with Heuristic Guidance
-        hotspot_guidance = ", ".join([f"Page {h['page']} ({'/'.join(h['signals'])})" for h in hotspots[:15]])
-        
-        prompt = f"""
-        ROLE: Senior Forensic Loan Auditor & Legal Risk Strategist.
-        
-        TASK: 
-        Conduct a DEEP FORENSIC AUDIT of the attached LOAN AGREEMENT. 
-        You MUST find and extract at least 5-10 specific traps, red flags, or predatory clauses. 
-        Do not be conservative; identify anything that could potentially disadvantage a human borrower.
-
-        HEURISTIC GUIDANCE (Keywords found locally):
-        {hotspot_guidance}
-
-        AUDIT REQUIREMENTS:
-        1. CORE FACTS: Extract Interest Rate (APR), Loan Amount, Term, Late Penalties, Collateral, and Jurisdiction.
-        2. RED FLAGS (MANDATORY: Minimum 5): 
-           - Look for: Acceleration clauses, Prepayment penalties, Confession of Judgment, Asset Seizure rights, High interest hikes on default, Hidden fees, and Jury Trial waivers.
-           - Provide the EXACT QUOTE from the PDF for each.
-        3. EXECUTIVE SUMMARY: Provide a 3-sentence high-level summary of the overall risk level and the "biggest catch" in this document.
-        4. VERDICT: Trust Score (0-100) and Verdict (Safe/Caution/Critical).
-
-        OUTPUT FORMAT (STRICT JSON ONLY):
-        {{
-            "document_metadata": {{ 
-                "trust_score": number, 
-                "verdict": "Safe" | "Caution" | "Critical",
-                "summary": "3-sentence executive summary here" 
-            }},
-            "facts": {{
-                "Interest Rate": "string",
-                "Loan Amount": "string",
-                "Loan Term": "string",
-                "Late Penalties": "string",
-                "Collateral": "string",
-                "Jurisdiction": "string"
-            }},
-            "red_flags": [
-                {{
-                    "severity": "Low" | "Medium" | "High",
-                    "category": "string",
-                    "text_found": "EXACT QUOTE FROM PDF",
-                    "reasoning": "Detailed explanation of the risk"
-                }}
-            ],
-            "explainability": {{ "confidence": number }}
-        }}
-        """
-
-        # 3. Request Analysis with explicit Parts (Robust method)
-        print(f"Requesting deep audit from Gemini 1.5 Flash...")
         response = client.models.generate_content(
             model='gemini-1.5-flash',
-            contents=[
-                types.Part.from_uri(file_uri=file_handle.uri, mime_type="application/pdf"),
-                types.Part.from_text(text=prompt)
-            ]
+            contents=prompt
         )
         
-        # Log response for debugging
-        print(f"Gemini Response received. Length: {len(response.text)}")
-        
-        # Clean JSON and return
         clean_text = response.text.strip()
         if "```json" in clean_text:
             clean_text = clean_text.split("```json")[1].split("```")[0].strip()
         elif "```" in clean_text:
              clean_text = clean_text.split("```")[1].split("```")[0].strip()
         
-        # Cleanup: delete file from cloud
-        try:
-            client.files.delete(name=file_handle.name)
-        except:
-            pass
-        
         return json.loads(clean_text)
-
     except Exception as e:
-        print(f"Cloud Audit Error: {e}")
-        return {"error": f"Cloud-First analysis failed: {str(e)}"}
+        print(f"API Error: {e}")
+        return {"error": f"Forensic audit failed: {str(e)}"}
 
 def process_document(pdf_path):
     """
-    Zero-OOM Orchestrator.
-    Offloads digitization and OCR to Google Cloud.
+    Main Orchestrator: Full-Doc Extraction + Rigorous Analysis.
+    Optimized for Render Free Tier (Stable & Fast).
     """
     start_time = time.time()
     
-    # 1. Ultra-Lightweight Heuristic Scan (PyMuPDF)
-    hotspots = extract_heuristic_signals(pdf_path)
+    # 1. Extract ALL text (PyMuPDF is very safe for RAM)
+    full_text = extract_entire_document_text(pdf_path)
     
-    # 2. Cloud-Side Forensic Audit
-    final_report = analyze_cloud_first(pdf_path, hotspots)
+    # 2. Deep Forensic Analysis
+    final_report = analyze_document_rigorous(full_text)
     
     if "error" not in final_report:
         final_report["performance"] = {
             "total_time": round(time.time() - start_time, 2),
-            "method": "Zero-OOM Cloud-First Streaming",
-            "pages_processed": len(hotspots)
+            "method": "Full-Doc Direct Analysis",
+            "status": "Success"
         }
     
     return final_report
