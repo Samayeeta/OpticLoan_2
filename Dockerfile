@@ -21,12 +21,12 @@ COPY Backend/ .
 # Ensure the upload directory exists and is writable
 RUN mkdir -p uploads && chmod 777 uploads
 
-# Expose the port the app runs on
+# Expose the port (Render handles this, but documenting is good practice)
 EXPOSE 5000
 
 # Set environment variables for Render
-ENV PORT=5000
 ENV PYTHONUNBUFFERED=1
 
 # Run the application with a single worker for maximum stability
-CMD ["gunicorn", "--workers", "1", "--bind", "0.0.0.0:5000", "app:app"]
+# Use the PORT environment variable if available, otherwise default to 5000
+CMD gunicorn --workers 1 --bind 0.0.0.0:${PORT:-5000} app:app
