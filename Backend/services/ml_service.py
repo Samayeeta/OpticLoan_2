@@ -4,6 +4,7 @@ import json
 import time
 import fitz  # PyMuPDF
 from google import genai
+from google.genai import types
 from config import Config
 
 # Configure Gemini Client
@@ -77,24 +78,34 @@ def analyze_cloud_first(pdf_path, hotspots):
             file_handle = client.files.get(name=file_handle.name)
 
         # 2. Prepare the prompt with Heuristic Guidance
-        hotspot_guidance = ", ".join([f"Page {h['page']} ({'/'.join(h['signals'])})" for h in hotspots[:10]])
+        hotspot_guidance = ", ".join([f"Page {h['page']} ({'/'.join(h['signals'])})" for h in hotspots[:15]])
         
         prompt = f"""
-        ROLE: Professional Legal Auditor
-        TASK: Perform a forensic audit on the attached LOAN DOCUMENT.
+        ROLE: Senior Forensic Loan Auditor & Legal Risk Strategist.
         
-        HEURISTIC GUIDANCE:
-        Our local scanner identified high-risk signals on the following pages: {hotspot_guidance}.
-        Please pay EXTRA attention to these pages, but perform a comprehensive audit of the ENTIRE document.
+        TASK: 
+        Conduct a DEEP FORENSIC AUDIT of the attached LOAN AGREEMENT. 
+        You MUST find and extract at least 5-10 specific traps, red flags, or predatory clauses. 
+        Do not be conservative; identify anything that could potentially disadvantage a human borrower.
 
-        AUDIT INSTRUCTIONS:
-        1. EXTRACT CORE TERMS: Interest Rate, Amount, Term, Late Penalties, Collateral, Jurisdiction.
-        2. RISK AUDIT: Identify Predatory Clauses, Hidden Fees, Default Triggers, and Legal Waivers.
-        3. VERDICT: Provide a Trust Score (0-100) and a final Verdict (Safe/Caution/Critical).
+        HEURISTIC GUIDANCE (Keywords found locally):
+        {hotspot_guidance}
+
+        AUDIT REQUIREMENTS:
+        1. CORE FACTS: Extract Interest Rate (APR), Loan Amount, Term, Late Penalties, Collateral, and Jurisdiction.
+        2. RED FLAGS (MANDATORY: Minimum 5): 
+           - Look for: Acceleration clauses, Prepayment penalties, Confession of Judgment, Asset Seizure rights, High interest hikes on default, Hidden fees, and Jury Trial waivers.
+           - Provide the EXACT QUOTE from the PDF for each.
+        3. EXECUTIVE SUMMARY: Provide a 3-sentence high-level summary of the overall risk level and the "biggest catch" in this document.
+        4. VERDICT: Trust Score (0-100) and Verdict (Safe/Caution/Critical).
 
         OUTPUT FORMAT (STRICT JSON ONLY):
         {{
-            "document_metadata": {{ "trust_score": number, "verdict": "Safe" | "Caution" | "Critical" }},
+            "document_metadata": {{ 
+                "trust_score": number, 
+                "verdict": "Safe" | "Caution" | "Critical",
+                "summary": "3-sentence executive summary here" 
+            }},
             "facts": {{
                 "Interest Rate": "string",
                 "Loan Amount": "string",
@@ -107,19 +118,26 @@ def analyze_cloud_first(pdf_path, hotspots):
                 {{
                     "severity": "Low" | "Medium" | "High",
                     "category": "string",
-                    "text_found": "exact quote from PDF",
-                    "reasoning": "human-friendly explanation"
+                    "text_found": "EXACT QUOTE FROM PDF",
+                    "reasoning": "Detailed explanation of the risk"
                 }}
             ],
             "explainability": {{ "confidence": number }}
         }}
         """
 
-        # 3. Request Analysis with the File Reference
+        # 3. Request Analysis with explicit Parts (Robust method)
+        print(f"Requesting deep audit from Gemini 1.5 Flash...")
         response = client.models.generate_content(
             model='gemini-1.5-flash',
-            contents=[file_handle, prompt]
+            contents=[
+                types.Part.from_uri(file_uri=file_handle.uri, mime_type="application/pdf"),
+                types.Part.from_text(text=prompt)
+            ]
         )
+        
+        # Log response for debugging
+        print(f"Gemini Response received. Length: {len(response.text)}")
         
         # Clean JSON and return
         clean_text = response.text.strip()
@@ -128,8 +146,11 @@ def analyze_cloud_first(pdf_path, hotspots):
         elif "```" in clean_text:
              clean_text = clean_text.split("```")[1].split("```")[0].strip()
         
-        # (Optional) Cleanup: delete file from cloud
-        client.files.delete(name=file_handle.name)
+        # Cleanup: delete file from cloud
+        try:
+            client.files.delete(name=file_handle.name)
+        except:
+            pass
         
         return json.loads(clean_text)
 

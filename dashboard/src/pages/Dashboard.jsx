@@ -161,9 +161,9 @@ const Dashboard = () => {
                         <span className="text-[12rem] font-black leading-none">⚖️</span>
                     </div>
                     <div className="relative z-10 max-w-2xl px-4 md:px-0">
-                        <h2 className="text-xl md:text-2xl font-black mb-4 uppercase tracking-tight">Recommendation for Negotiation</h2>
+                        <h2 className="text-xl md:text-2xl font-black mb-4 uppercase tracking-tight">AI Executive Summary</h2>
                         <p className="text-blue-100 font-medium leading-relaxed mb-6 text-sm md:text-base">
-                            Based on the {red_flags.length} risks identified by our selective Gemini analysis, we recommend reviewing {red_flags.map(f => f.category).join(', ')} clauses. Ensure that these terms align with standard market practices before signing.
+                            {document_metadata?.summary || `Based on the ${red_flags.length} risks identified by our selective Gemini analysis, we recommend reviewing ${red_flags.map(f => f.category).join(', ')} clauses. Ensure that these terms align with standard market practices before signing.`}
                         </p>
                         <button className="w-full md:w-auto px-6 py-3 bg-amber-500 text-[#003366] font-black rounded shadow-lg hover:bg-amber-400 hover:-translate-y-0.5 transition-all text-sm uppercase tracking-widest">
                             GENERATE COUNTER-OFFER DOC
