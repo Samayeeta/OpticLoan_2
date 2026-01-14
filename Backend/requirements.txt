@@ -5,6 +5,5 @@ python-dotenv
 pytesseract
 pdf2image
 Pillow
-transformers
-torch
-tf-keras
+google-generativeai
+pdfplumber
