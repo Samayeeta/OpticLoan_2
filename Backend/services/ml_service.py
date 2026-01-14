@@ -20,10 +20,10 @@ else:
 
 # --- HEURISTIC RISK SIGNALS ---
 RISK_CATEGORIES = {
-    "Financial Traps": ["fee", "charge", "penalty", "commission", "cost", "repayment", "prepayment", "yield maintenance"],
-    "Default & Seizure": ["default", "acceleration", "seize", "possession", "collateral", "foreclosure", "security interest", "remedy"],
-    "Legal Waivers": ["waive", "jury trial", "arbitration", "jurisdiction", "governing law", "venue", "class action"],
-    "Hidden Obligations": ["confession of judgment", "cognovit", "guaranty", "indemnify", "liability"]
+    "Financial Traps": ["fee", "charge", "penalty", "commission", "cost", "repayment", "prepayment", "yield maintenance", "balloon", "interest rate", "apr", "percentage"],
+    "Default & Seizure": ["default", "acceleration", "seize", "possession", "collateral", "foreclosure", "security interest", "remedy", "breach", "termination"],
+    "Legal Waivers": ["waive", "jury trial", "arbitration", "jurisdiction", "governing law", "venue", "class action", "immunity", "liability"],
+    "Hidden Obligations": ["confession of judgment", "cognovit", "guaranty", "indemnify", "power of attorney", "assignment"]
 }
 
 def extract_text_full_doc(pdf_path):
@@ -60,14 +60,16 @@ def heuristic_scanner(pages):
     """
     high_signal_chunks = []
     
-    # Always include the first page (usually contains core facts)
-    if pages:
+    # CORE FACTS: Always include first 3 pages (where most facts live)
+    fact_pages = pages[:3]
+    for p in fact_pages:
         high_signal_chunks.append({
-            "source": "Page 1 (Header/Facts)",
-            "text": pages[0]["content"][:3000]
+            "source": f"Page {p['page']} (Core Facts Search)",
+            "text": p["content"][:4000] # Slightly larger window for facts
         })
 
-    for page in pages[1:]: # Skip first page as it's already added
+    # RISK DISCOVERY: Scan remaining pages for traps
+    for page in pages[3:]: 
         content = page["content"]
         page_num = page["page"]
         
@@ -76,18 +78,16 @@ def heuristic_scanner(pages):
             for kw in keywords:
                 if re.search(r'\b' + re.escape(kw) + r'\b', content, re.IGNORECASE):
                     found_signals.append(category)
-                    break # One signal per category per page is enough
+                    break 
         
         if found_signals:
-            # If signals found, add the page content (or a window)
-            # We limit to 3000 chars to avoid token bloating
             high_signal_chunks.append({
                 "source": f"Page {page_num} (Signals: {', '.join(found_signals)})",
                 "text": content[:3000]
             })
             
-    # If we have too many chunks, prioritize (keep first 10 hotspots for safety)
-    return high_signal_chunks[:10]
+    # Limit to top 15 hotspots to avoid token limits but ensure coverage
+    return high_signal_chunks[:15]
 
 def analyze_selective(signal_chunks):
     """

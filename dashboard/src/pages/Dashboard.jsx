@@ -71,7 +71,7 @@ const Dashboard = () => {
                 <div className="bg-white border-b-4 border-emerald-500 p-6 rounded shadow-sm">
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">FACTS EXTRACTED</p>
                     <p className="text-3xl font-black text-[#003366]">{Object.keys(facts || {}).length}</p>
-                    <p className="text-xs text-slate-500 mt-2">Core financial terms identified by DistilBERT</p>
+                    <p className="text-xs text-slate-500 mt-2">Core financial terms identified by Gemini AI</p>
                 </div>
                 <div className={`bg-white border-b-4 p-6 rounded shadow-sm ${getVerdictColor(document_metadata?.verdict).split(' ')[2]}`}>
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">RED FLAGS</p>
@@ -107,7 +107,7 @@ const Dashboard = () => {
                                         </td>
                                         <td className="px-6 py-4 text-right">
                                             <span className="px-2 py-1 bg-slate-100 text-slate-400 text-[10px] font-bold rounded group-hover:bg-[#003366]/10 group-hover:text-[#003366] transition-colors">
-                                                LOCAL AI ANALYSIS
+                                                SELECTIVE AI ANALYSIS
                                             </span>
                                         </td>
                                     </tr>
@@ -163,7 +163,7 @@ const Dashboard = () => {
                     <div className="relative z-10 max-w-2xl px-4 md:px-0">
                         <h2 className="text-xl md:text-2xl font-black mb-4 uppercase tracking-tight">Recommendation for Negotiation</h2>
                         <p className="text-blue-100 font-medium leading-relaxed mb-6 text-sm md:text-base">
-                            Based on the {red_flags.length} risks identified by our local DistilBERT analysis, we recommend reviewing {red_flags.map(f => f.category).join(', ')} clauses. Ensure that these terms align with standard market practices before signing.
+                            Based on the {red_flags.length} risks identified by our selective Gemini analysis, we recommend reviewing {red_flags.map(f => f.category).join(', ')} clauses. Ensure that these terms align with standard market practices before signing.
                         </p>
                         <button className="w-full md:w-auto px-6 py-3 bg-amber-500 text-[#003366] font-black rounded shadow-lg hover:bg-amber-400 hover:-translate-y-0.5 transition-all text-sm uppercase tracking-widest">
                             GENERATE COUNTER-OFFER DOC
